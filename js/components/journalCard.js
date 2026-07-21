@@ -1,4 +1,4 @@
-import { escapeHtml, formatMoney, formatPct, parseISODate } from "../config.js";
+import { escapeHtml, formatMoney, formatPct, outcomeMeta, parseISODate } from "../config.js";
 
 const dayNames = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"];
 
@@ -11,6 +11,7 @@ function tradesOf(entry) {
     rr: entry.rr,
     emotion: entry.emotion || "",
     notes: "",
+    outcome: entry.outcome || "",
   }];
 }
 
@@ -26,7 +27,7 @@ export function journalCardHtml(entry, { strategyMap = {} } = {}) {
           <h3 class="card__title u-mb-2">${escapeHtml(entry.date)} · ${dayNames[date.getDay()]}</h3>
           <div class="u-flex u-gap-2 u-items-center">
             <span class="badge ${entry.pnl >= 0 ? "badge--success" : "badge--loss"}">${formatPct(entry.pct)}</span>
-            <span class="muted u-text-xs">${trades.length} معامله</span>
+            <span class="muted u-text-xs num">${trades.length} معامله</span>
           </div>
         </div>
         <div class="u-flex u-gap-2">
@@ -39,21 +40,23 @@ export function journalCardHtml(entry, { strategyMap = {} } = {}) {
         <div class="metric"><span class="metric__label">بالانس شروع</span><span class="metric__value num">${formatMoney(entry.balanceStart)}</span></div>
         <div class="metric"><span class="metric__label">بالانس نهایی</span><span class="metric__value num">${formatMoney(entry.balanceEnd)}</span></div>
         <div class="metric"><span class="metric__label">سود / زیان</span><span class="metric__value num ${pnlClass}">${formatMoney(entry.pnl)}</span></div>
-        <div class="metric"><span class="metric__label">پیروی از قوانین</span><span class="metric__value num">${entry.ruleFollow || "—"} / ۵</span></div>
+        <div class="metric"><span class="metric__label">پیروی از قوانین</span><span class="metric__value num">${entry.ruleFollow || "—"} / 5</span></div>
       </div>
       <div class="journal-trades">
         ${trades.map((trade, index) => {
           const strategy = strategyMap[trade.strategy] || {};
+          const outcome = outcomeMeta(trade.outcome);
           return `
             <div class="journal-trade">
               <div class="journal-trade__title">
                 <span class="strategy-chip__swatch" style="background:${escapeHtml(strategy.color || "#34c5b1")}"></span>
                 <strong>معامله ${index + 1} · ${escapeHtml(trade.strategy || "بدون استراتژی")}</strong>
+                ${outcome ? `<span class="badge ${outcome.badge}">${outcome.label}</span>` : `<span class="badge badge--warn">بدون نتیجه</span>`}
               </div>
               <div class="journal-trade__metrics">
-                <span>ورود <b>${trade.entryQuality || "—"}/۵</b></span>
-                <span>خروج <b>${trade.exitQuality || "—"}/۵</b></span>
-                <span>R:R <b>${(2).toFixed(1)}</b></span>
+                <span>ورود <b class="num">${trade.entryQuality || "—"}/5</b></span>
+                <span>خروج <b class="num">${trade.exitQuality || "—"}/5</b></span>
+                <span>R:R <b class="num">${(2).toFixed(1)}</b></span>
               </div>
               ${trade.emotion ? `<p>${escapeHtml(trade.emotion)}</p>` : ""}
               ${trade.notes ? `<p>${escapeHtml(trade.notes)}</p>` : ""}

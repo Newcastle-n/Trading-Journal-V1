@@ -1,7 +1,10 @@
 {
   "userName": "سپهر",
-  "mediaBasePath": "D:\\Cursor-Projects\\Trading-Journal",
+  "mediaBasePath": "E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades",
   "theme": "dark",
+  "mediaSeen": {
+    "2025-12-19": true
+  },
   "goals": {
     "dailyPct": 0,
     "weeklyPct": 0,

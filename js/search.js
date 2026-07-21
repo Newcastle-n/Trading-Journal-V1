@@ -83,26 +83,42 @@ export function buildSearchIndex(state) {
       id: s.id,
       title: s.name,
       subtitle: s.description,
-      action: { type: "view", view: "knowledge", section: "strategy-cards" },
+      action: { type: "view", view: "knowledge", section: `strat-${String(s.id).replace(/\//g, "-")}` },
     });
   });
 
-  (state.notes?.sections || []).forEach((section) => {
-    section.items.forEach((item) => {
+  if (state.notes?.version === 2) {
+    Object.values(state.notes.pages || {}).forEach((page) => {
+      const body = (page.blocks || [])
+        .map((b) => b.text || b.title || "")
+        .join(" ")
+        .slice(0, 80);
       items.push({
         type: "note",
-        id: item.id,
-        title: item.text.slice(0, 60),
-        subtitle: section.title,
-        action: { type: "view", view: "knowledge", section: section.id },
+        id: page.id,
+        title: page.title,
+        subtitle: body || (page.tags || []).join(" · "),
+        action: { type: "view", view: "knowledge", section: page.id },
       });
     });
-  });
+  } else {
+    (state.notes?.sections || []).forEach((section) => {
+      section.items.forEach((item) => {
+        items.push({
+          type: "note",
+          id: item.id,
+          title: item.text.slice(0, 60),
+          subtitle: section.title,
+          action: { type: "view", view: "knowledge", section: section.id },
+        });
+      });
+    });
+  }
 
   items.push(
     { type: "command", id: "c-new-j", title: "ثبت ژورنال جدید", subtitle: "ژورنال", action: { type: "new-journal" } },
     { type: "command", id: "c-dash", title: "رفتن به خانه", subtitle: "ناوبری", action: { type: "view", view: "dashboard" } },
-    { type: "command", id: "c-plan", title: "پلن معاملاتی", subtitle: "دانش", action: { type: "view", view: "knowledge", section: "trading-plan" } },
+    { type: "command", id: "c-plan", title: "پلن معاملاتی", subtitle: "دانش", action: { type: "view", view: "knowledge", section: "plan-overview" } },
     { type: "command", id: "c-morning", title: "چک لیست", subtitle: "روال", action: { type: "morning" } },
     { type: "command", id: "c-eod", title: "مرور پایان روز", subtitle: "روال", action: { type: "eod" } },
     { type: "command", id: "c-settings", title: "تنظیمات", subtitle: "فضای کاری", action: { type: "settings" } },

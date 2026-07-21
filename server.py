@@ -24,6 +24,7 @@ PORT = 8765
 API_FILES = {
     "/api/journal": DATA / "journal.json",
     "/api/notes": DATA / "notes.json",
+    "/api/booklet": DATA / "notes-booklet.json",
     "/api/settings": DATA / "settings.json",
     "/api/strategies": DATA / "strategies.json",
 }
@@ -39,6 +40,73 @@ def write_json(path: Path, payload):
     with path.open("w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
         f.write("\n")
+
+
+def normalize_iso_date(value: str) -> str | None:
+    """Accept YYYY-MM-DD or YYYY-M-D and return zero-padded ISO date."""
+    text = (value or "").strip()
+    parts = text.split("-")
+    if len(parts) != 3:
+        return None
+    try:
+        year, month, day = (int(parts[0]), int(parts[1]), int(parts[2]))
+        return f"{year:04d}-{month:02d}-{day:02d}"
+    except ValueError:
+        return None
+
+
+def date_folder_candidates(iso_date: str) -> list[str]:
+    """Folder name variants used on disk (padded and unpadded)."""
+    normalized = normalize_iso_date(iso_date)
+    if not normalized:
+        return []
+    year, month, day = normalized.split("-")
+    return [
+        normalized,
+        f"{int(year)}-{int(month)}-{int(day)}",
+        f"{int(year)}-{int(month):02d}-{int(day)}",
+        f"{int(year)}-{int(month)}-{int(day):02d}",
+    ]
+
+
+def resolve_dated_media_folder(base: Path, iso_date: str) -> Path | None:
+    if not base.exists():
+        return None
+    tried = set()
+    for name in date_folder_candidates(iso_date):
+        if name in tried:
+            continue
+        tried.add(name)
+        folder = base / name
+        if folder.is_dir():
+            return folder
+    # Fallback: scan once for matching normalized date
+    target = normalize_iso_date(iso_date)
+    if not target:
+        return None
+    for child in base.iterdir():
+        if not child.is_dir() or child.name.startswith("#"):
+            continue
+        if normalize_iso_date(child.name) == target:
+            return child
+    return None
+
+
+def list_media_dates(base: Path) -> dict:
+    dates: list[str] = []
+    folders: dict[str, str] = {}
+    if not base.exists():
+        return {"dates": dates, "folders": folders, "base": str(base), "ok": False}
+    for child in sorted(base.iterdir(), key=lambda p: p.name):
+        if not child.is_dir() or child.name.startswith("#"):
+            continue
+        iso = normalize_iso_date(child.name)
+        if not iso:
+            continue
+        dates.append(iso)
+        folders[iso] = child.name
+    dates = sorted(set(dates))
+    return {"dates": dates, "folders": folders, "base": str(base), "ok": True}
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -71,6 +139,14 @@ class Handler(SimpleHTTPRequestHandler):
                 return
             self._send_json(200, read_json(path))
             return
+        if parsed.path == "/api/media-dates":
+            try:
+                settings = read_json(DATA / "settings.json")
+                base = Path(str(settings.get("mediaBasePath") or "").strip())
+                self._send_json(200, list_media_dates(base))
+            except Exception as exc:  # noqa: BLE001
+                self._send_json(500, {"error": str(exc)})
+            return
         if parsed.path == "/":
             self.path = "/index.html"
         return SimpleHTTPRequestHandler.do_GET(self)
@@ -94,26 +170,50 @@ class Handler(SimpleHTTPRequestHandler):
                     payload.get("mediaPath") or payload.get("path") or ""
                 ).strip()
                 date = str(payload.get("date") or "").strip()
+                create_missing = bool(payload.get("createIfMissing", False))
                 settings = read_json(DATA / "settings.json")
                 base = (settings.get("mediaBasePath") or "").strip()
 
                 if explicit:
                     folder = Path(explicit)
+                    if not folder.exists():
+                        if create_missing:
+                            folder.mkdir(parents=True, exist_ok=True)
+                        else:
+                            self._send_json(
+                                404,
+                                {"error": f"پوشه پیدا نشد: {folder}"},
+                            )
+                            return
                 elif base and date:
-                    folder = Path(base) / date
+                    folder = resolve_dated_media_folder(Path(base), date)
+                    if folder is None:
+                        # Prefer existing unpadded/padded names; optionally create padded ISO.
+                        if create_missing:
+                            folder = Path(base) / (normalize_iso_date(date) or date)
+                            folder.mkdir(parents=True, exist_ok=True)
+                        else:
+                            self._send_json(
+                                404,
+                                {
+                                    "error": f"برای تاریخ {date} پوشه‌ای در مسیر رسانه‌ها پیدا نشد.",
+                                },
+                            )
+                            return
                 elif base:
                     folder = Path(base)
+                    if not folder.exists():
+                        self._send_json(404, {"error": f"مسیر پایه پیدا نشد: {folder}"})
+                        return
                 else:
                     self._send_json(
                         400,
                         {
-                            "error": "مسیر پوشه مشخص نشده. در ژورنال مسیر اسکرین/ویدیو را وارد کن.",
+                            "error": "مسیر پوشه مشخص نشده. در تنظیمات mediaBasePath را وارد کن.",
                         },
                     )
                     return
 
-                if not folder.exists():
-                    folder.mkdir(parents=True, exist_ok=True)
                 if sys.platform.startswith("win"):
                     os.startfile(str(folder))  # type: ignore[attr-defined]
                 else:

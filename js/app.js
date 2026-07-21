@@ -1,15 +1,15 @@
 import { config } from "./config.js";
 import { initRouter, onRoute, navigate } from "./router.js";
-import { loadAll, getState, saveNotes, saveSettings } from "./storage.js";
+import { loadAll, getState, saveSettings } from "./storage.js";
 import { bindSidebar, renderSidebar, renderSessionPill, syncNavActive } from "./components/sidebar.js";
 import { bindModalDismiss, openModal, closeModal } from "./components/modal.js";
 import { showToast } from "./components/toast.js";
 import { renderDashboard } from "./dashboard.js";
 import { renderJournal, bindJournalForm } from "./journal.js";
-import { renderKnowledge, bindKnowledgeEvents } from "./knowledge.js";
+import { renderKnowledge, bindKnowledgeEvents, addQuickNote } from "./knowledge.js";
+import { renderKnowledge2, bindKnowledge2Events } from "./knowledge2.js";
 import { renderBacktests } from "./search.js";
 import { bindCommandPalette } from "./commandPalette.js";
-import { uid } from "./config.js";
 
 async function refresh() {
   const state = getState();
@@ -18,6 +18,7 @@ async function refresh() {
   renderDashboard(state);
   renderJournal(state);
   renderKnowledge(state);
+  renderKnowledge2(state);
   renderBacktests(state);
   syncNavActive(location.hash.replace(/^#\/?/, "") || "dashboard");
   showActiveView(location.hash.replace(/^#\/?/, "") || "dashboard");
@@ -124,24 +125,14 @@ function bindCapture() {
     e.preventDefault();
     const text = e.target.elements.note.value.trim();
     if (!text) return;
-    const notes = structuredClone(getState().notes);
-    let section = notes.sections.find((s) => s.id === "quick");
-    if (!section) {
-      section = { id: "quick", title: "یادداشت‌های سریع", items: [] };
-      notes.sections.push(section);
-    }
-    section.items.unshift({
-      id: uid("qc"),
-      text,
-      tags: ["quick"],
-      favorite: false,
-    });
     try {
-      await saveNotes(notes);
+      await addQuickNote(text);
       e.target.reset();
       closeModal("modal-capture");
-      showToast("نکته در بخش «یادداشت‌های سریع» ذخیره شد");
+      showToast("نکته در Inbox دانش ذخیره شد");
       await refresh();
+      navigate("knowledge");
+      window.dispatchEvent(new CustomEvent("workspace:open-section", { detail: "quick-notes" }));
     } catch (err) {
       showToast(err.message);
     }
@@ -207,6 +198,7 @@ async function boot() {
   bindCapture();
   bindChecklists();
   bindKnowledgeEvents();
+  bindKnowledge2Events();
   bindCommandPalette();
   bindJournalForm(async () => {
     await loadAll();

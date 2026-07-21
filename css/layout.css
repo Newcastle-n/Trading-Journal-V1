@@ -287,8 +287,11 @@
   margin-inline: auto;
 }
 
-.view-root[data-view="knowledge"] {
-  max-width: 1600px;
+.view-root[data-view="knowledge"],
+.view-root[data-view="knowledge2"] {
+  max-width: 1680px;
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
 }
 
 .view {

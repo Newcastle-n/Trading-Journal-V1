@@ -1,16 +1,21 @@
 import {
+  TRADE_OUTCOMES,
   calcStreak,
+  calcStrategyStats,
   calcWindowStats,
   enrichEntries,
   escapeHtml,
   formatMoney,
   formatPct,
+  groupStrategies,
+  normalizeOutcome,
   sameMonth,
   sameWeek,
   todayISO,
   uid,
 } from "./config.js";
 import { journalCardHtml } from "./components/journalCard.js";
+import { icon } from "./components/icons.js";
 import { openModal, closeModal } from "./components/modal.js";
 import { showToast } from "./components/toast.js";
 import {
@@ -19,6 +24,7 @@ import {
   openMediaFolder,
   saveJournal,
   saveStrategies,
+  setMediaSeen,
   upsertJournalEntry,
 } from "./storage.js";
 
@@ -44,6 +50,19 @@ function strategyMap(state) {
   ]));
 }
 
+function emptyTrade() {
+  return {
+    id: uid("trade"),
+    strategy: "",
+    entryQuality: 3,
+    exitQuality: 3,
+    rr: 2,
+    emotion: "",
+    notes: "",
+    outcome: "",
+  };
+}
+
 function normalizeTrades(entry = {}) {
   if (Array.isArray(entry.trades) && entry.trades.length) {
     return entry.trades.slice(0, MAX_TRADES).map((trade) => ({
@@ -54,6 +73,7 @@ function normalizeTrades(entry = {}) {
       rr: 2,
       emotion: trade.emotion || "",
       notes: trade.notes || "",
+      outcome: normalizeOutcome(trade.outcome),
     }));
   }
   if (entry.strategy || entry.rr != null || entry.emotion) {
@@ -65,26 +85,34 @@ function normalizeTrades(entry = {}) {
       rr: 2,
       emotion: entry.emotion || "",
       notes: "",
+      outcome: normalizeOutcome(entry.outcome),
     }];
   }
-  return [{
-    id: uid("trade"),
-    strategy: "",
-    entryQuality: 3,
-    exitQuality: 3,
-    rr: 2,
-    emotion: "",
-    notes: "",
-  }];
+  return [emptyTrade()];
 }
 
 function strategyOptions(selected = "") {
+  const groups = groupStrategies(allStrategies());
   return [
     `<option value="">انتخاب استراتژی</option>`,
-    ...allStrategies().map((strategy) => (
-      `<option value="${escapeHtml(strategy.name)}" ${strategy.name === selected ? "selected" : ""}>${escapeHtml(strategy.name)}</option>`
-    )),
+    ...groups.map((group) => `
+      <optgroup label="${escapeHtml(group.label)}">
+        ${group.strategies.map((strategy) => (
+          `<option value="${escapeHtml(strategy.name)}" ${strategy.name === selected ? "selected" : ""}>${escapeHtml(strategy.name)}</option>`
+        )).join("")}
+      </optgroup>
+    `),
   ].join("");
+}
+
+function outcomeOptionsHtml(selected = "", tradeId = "") {
+  const group = `outcome-${tradeId || "new"}`;
+  return TRADE_OUTCOMES.map((item) => `
+    <label class="outcome-option outcome-option--${item.value} ${selected === item.value ? "is-active" : ""}">
+      <input type="radio" data-trade-field="outcome" name="${escapeHtml(group)}" value="${item.value}" ${selected === item.value ? "checked" : ""} />
+      <span>${item.label}</span>
+    </label>
+  `).join("");
 }
 
 function tradeEditorHtml(trade, index) {
@@ -99,21 +127,27 @@ function tradeEditorHtml(trade, index) {
           <label>استراتژی</label>
           <select data-trade-field="strategy">${strategyOptions(trade.strategy)}</select>
         </div>
+        <div class="field field--full">
+          <label>نتیجه معامله</label>
+          <div class="outcome-toggle" role="group" aria-label="نتیجه معامله">
+            ${outcomeOptionsHtml(trade.outcome, trade.id)}
+          </div>
+        </div>
         <div class="field range-field">
           <div class="field-label-row">
             <label>کیفیت ورود</label>
-            <output>${trade.entryQuality}</output>
+            <output class="num">${trade.entryQuality}</output>
           </div>
           <input data-trade-field="entryQuality" type="range" min="1" max="5" value="${trade.entryQuality}" />
-          <div class="range-scale"><span>۱</span><span>۵</span></div>
+          <div class="range-scale"><span class="num">1</span><span class="num">5</span></div>
         </div>
         <div class="field range-field">
           <div class="field-label-row">
             <label>کیفیت خروج</label>
-            <output>${trade.exitQuality}</output>
+            <output class="num">${trade.exitQuality}</output>
           </div>
           <input data-trade-field="exitQuality" type="range" min="1" max="5" value="${trade.exitQuality}" />
-          <div class="range-scale"><span>۱</span><span>۵</span></div>
+          <div class="range-scale"><span class="num">1</span><span class="num">5</span></div>
         </div>
         <div class="field">
           <label>احساس حین معامله</label>
@@ -139,6 +173,7 @@ function renderTradeEditors(trades) {
 function collectTrades() {
   return [...document.querySelectorAll("#trades-editor-list .trade-editor")].map((card) => {
     const get = (name) => card.querySelector(`[data-trade-field="${name}"]`)?.value ?? "";
+    const outcome = card.querySelector(`[data-trade-field="outcome"]:checked`)?.value ?? "";
     return {
       id: card.dataset.tradeId || uid("trade"),
       strategy: get("strategy"),
@@ -148,6 +183,7 @@ function collectTrades() {
       rr: 2,
       emotion: get("emotion").trim(),
       notes: get("notes").trim(),
+      outcome: normalizeOutcome(outcome),
     };
   });
 }
@@ -201,9 +237,27 @@ function weeklySummaries(entries) {
   }));
 }
 
-function calendarCell(entry, iso, day, weekSummary) {
+function calendarMeta() {
+  const state = getState();
+  const mediaDates = new Set(state.mediaDates?.dates || []);
+  const mediaSeen = state.settings?.mediaSeen || {};
+  return { mediaDates, mediaSeen };
+}
+
+function seenStatusHtml(seen, iso) {
+  if (seen) {
+    return `<button type="button" class="cal-cell__seen-icon is-seen" data-toggle-seen="${escapeHtml(iso)}" title="برداشتن Seen">${icon("check", 14)}</button>`;
+  }
+  return `<button type="button" class="cal-cell__seen-icon is-unseen" data-toggle-seen="${escapeHtml(iso)}" title="علامت Seen">${icon("eye", 14)}</button>`;
+}
+
+function calendarCell(entry, iso, day, weekSummary, { mediaDates, mediaSeen } = calendarMeta()) {
   const pnlClass = entry ? (entry.pnl >= 0 ? "is-profit" : "is-loss") : "";
   const todayClass = iso === todayISO() ? "is-today" : "";
+  const hasMedia = mediaDates.has(iso);
+  const seen = Boolean(mediaSeen[iso]);
+  const mediaClass = hasMedia ? "has-media" : "";
+  const seenClass = seen ? "is-seen" : "is-unseen";
   const dayOfWeek = new Date(`${iso}T12:00:00`).getDay();
   if (dayOfWeek === 6) {
     // Saturday: merge Saturday+Sunday into one spanning card.
@@ -217,7 +271,7 @@ function calendarCell(entry, iso, day, weekSummary) {
       : "";
     return `
       <div class="cal-cell cal-cell--weekend-merged is-weekend ${summaryClass} ${todayClass}">
-        <span class="cal-cell__day">${sameMonthAsNext ? `ش${day} · ی${nextDayNum}` : "آخر هفته"}</span>
+        <span class="cal-cell__day">${sameMonthAsNext ? `ش ${day} · ی ${nextDayNum}` : "آخر هفته"}</span>
         <span class="cal-cell__week-label">جمع هفته</span>
         ${weekSummary ? `
           <strong class="cal-cell__pnl">${formatMoney(weekSummary.pnl)}</strong>
@@ -244,24 +298,33 @@ function calendarCell(entry, iso, day, weekSummary) {
       </div>
     `;
   }
-  if (!entry) {
-    return `<button type="button" class="cal-cell ${todayClass}" data-cal-date="${iso}"><span class="cal-cell__day">${day}</span></button>`;
-  }
-  const strategies = [...new Set(normalizeTrades(entry).map((trade) => trade.strategy).filter(Boolean))];
+
+  const strategies = entry
+    ? [...new Set(normalizeTrades(entry).map((trade) => trade.strategy).filter(Boolean))]
+    : [];
   const strategyText = strategies.length > 2
     ? `${strategies.slice(0, 2).join(" · ")} +${strategies.length - 2}`
     : strategies.join(" · ");
+
   return `
-    <button type="button" class="cal-cell ${pnlClass} ${todayClass}" data-cal-date="${iso}">
-      <span class="cal-cell__day">${day}</span>
-      <strong class="cal-cell__pnl">${formatMoney(entry.pnl)}</strong>
-      <span class="cal-cell__pct">${formatPct(entry.pct)}</span>
-      <span class="cal-cell__strategy">${escapeHtml(strategyText || "بدون استراتژی")}</span>
-    </button>
+    <div class="cal-cell ${pnlClass} ${todayClass} ${mediaClass} ${seenClass}" data-cal-date="${iso}" role="button" tabindex="0">
+      <div class="cal-cell__top">
+        <span class="cal-cell__day num">${day}</span>
+        ${seenStatusHtml(seen, iso)}
+      </div>
+      ${entry ? `
+        <strong class="cal-cell__pnl">${formatMoney(entry.pnl)}</strong>
+        <span class="cal-cell__pct">${formatPct(entry.pct)}</span>
+        <span class="cal-cell__strategy">${escapeHtml(strategyText || "بدون استراتژی")}</span>
+      ` : `
+        ${hasMedia ? `<span class="cal-cell__media-hint">${icon("folder", 14)} رسانه</span>` : ""}
+      `}
+    </div>
   `;
 }
 
 function buildCalendar(entries, year, month) {
+  const meta = calendarMeta();
   const byDate = Object.fromEntries(enrichEntries(entries).map((entry) => [entry.date, entry]));
   const byWeek = weeklySummaries(entries);
   const first = new Date(year, month, 1);
@@ -274,7 +337,7 @@ function buildCalendar(entries, year, month) {
     // We skip rendering Sunday (except when it's the 1st day of the month).
     const dow = new Date(`${iso}T12:00:00`).getDay();
     if (dow === 0 && day > 1) continue;
-    cells.push(calendarCell(byDate[iso], iso, day, byWeek[weekStartKey(iso)]));
+    cells.push(calendarCell(byDate[iso], iso, day, byWeek[weekStartKey(iso)], meta));
   }
   return cells.join("");
 }
@@ -311,15 +374,30 @@ function openDayCard(date, entries, map) {
   const title = document.getElementById("day-card-title");
   if (!body || !title) return;
   const entry = enrichEntries(entries).find((item) => item.date === date);
+  const { mediaDates, mediaSeen } = calendarMeta();
+  const hasMedia = mediaDates.has(date);
+  const seen = Boolean(mediaSeen[date]);
   title.textContent = `جزئیات ${date}`;
+
+  const mediaBar = `
+    <div class="day-media-bar">
+      <button class="btn btn-primary" type="button" data-open-folder="${escapeHtml(date)}">باز کردن پوشه ویدیو / اسکرین</button>
+      <button class="btn ${seen ? "btn-soft" : "btn-ghost"}" type="button" data-toggle-seen="${escapeHtml(date)}">
+        ${seen ? "Seen ✓" : "علامت Seen"}
+      </button>
+      ${hasMedia ? `<span class="badge badge--teal">پوشه موجود است</span>` : `<span class="badge badge--warn">پوشه پیدا نشد</span>`}
+    </div>
+  `;
 
   if (!entry) {
     body.innerHTML = `
+      ${mediaBar}
       <div class="empty-state" style="padding:var(--space-5)">
         برای این روز ژورنالی ثبت نشده.
         <div class="u-mt-4"><button class="btn btn-primary" type="button" id="day-card-new">ثبت ژورنال این روز</button></div>
       </div>`;
     openModal("modal-day-card");
+    bindDayMediaActions(body, date, entries, map);
     document.getElementById("day-card-new")?.addEventListener("click", () => {
       closeModal("modal-day-card");
       openJournalForm({ date });
@@ -327,8 +405,9 @@ function openDayCard(date, entries, map) {
     return;
   }
 
-  body.innerHTML = journalCardHtml(entry, { strategyMap: map });
+  body.innerHTML = `${mediaBar}${journalCardHtml(entry, { strategyMap: map })}`;
   openModal("modal-day-card");
+  bindDayMediaActions(body, date, entries, map);
   body.querySelector("[data-edit-journal]")?.addEventListener("click", () => {
     closeModal("modal-day-card");
     openJournalForm(entry);
@@ -337,31 +416,88 @@ function openDayCard(date, entries, map) {
   body.querySelector("[data-open-media]")?.addEventListener("click", () => handleOpenMedia(entry));
 }
 
-async function handleOpenMedia(entry) {
-  if (!entry?.mediaPath) {
-    showToast("اول مسیر پوشه را در ویرایش ژورنال وارد کن");
-    closeModal("modal-day-card");
-    openJournalForm(entry || null);
-    return;
-  }
+function bindDayMediaActions(body, date, entries, map) {
+  body.querySelector("[data-open-folder]")?.addEventListener("click", () => openMediaForDate(date));
+  body.querySelector("[data-toggle-seen]")?.addEventListener("click", async () => {
+    await toggleSeen(date);
+    openDayCard(date, entries, map);
+    onJournalChanged?.();
+  });
+}
+
+async function openMediaForDate(date) {
   try {
-    await openMediaFolder({ mediaPath: entry.mediaPath });
+    const entry = (getState().journal?.entries || []).find((item) => item.date === date);
+    if (entry?.mediaPath) {
+      await openMediaFolder({ mediaPath: entry.mediaPath });
+    } else {
+      await openMediaFolder({ date });
+    }
     showToast("پوشه باز شد");
   } catch (error) {
     showToast(error.message || "باز کردن پوشه ممکن نشد");
   }
 }
 
-function strategyShowcase(state) {
-  return allStrategies(state).map((strategy) => `
+async function toggleSeen(date) {
+  const seen = Boolean(getState().settings?.mediaSeen?.[date]);
+  try {
+    await setMediaSeen(date, !seen);
+    showToast(!seen ? "Seen شد" : "Seen برداشته شد");
+  } catch (error) {
+    showToast(error.message || "ذخیره Seen ممکن نشد");
+  }
+}
+
+async function handleOpenMedia(entry) {
+  if (!entry?.date && !entry?.mediaPath) {
+    showToast("تاریخ یا مسیر پوشه مشخص نیست");
+    return;
+  }
+  try {
+    if (entry.mediaPath) {
+      await openMediaFolder({ mediaPath: entry.mediaPath });
+    } else {
+      await openMediaFolder({ date: entry.date });
+    }
+    showToast("پوشه باز شد");
+  } catch (error) {
+    showToast(error.message || "باز کردن پوشه ممکن نشد");
+  }
+}
+
+function strategyWinrateLabel(stats) {
+  if (!stats?.decided) return "بدون معامله قطعی";
+  return `نرخ برد ${formatPct(stats.winrate, 0)} · ${stats.wins}W / ${stats.losses}L`;
+}
+
+function strategyCardHtml(strategy, stats) {
+  const rf = stats.riskFree ? ` · ${stats.riskFree} RF` : "";
+  return `
     <button type="button" class="strategy-overview-card" data-open-strategy="${escapeHtml(strategy.id)}">
       <span class="strategy-overview-card__swatch" style="background:${escapeHtml(strategy.color || "#34c5b1")}"></span>
       <span>
         <strong>${escapeHtml(strategy.name)}</strong>
+        <small class="num">${escapeHtml(strategyWinrateLabel(stats))}${rf}</small>
         <small>${escapeHtml(strategy.description || "هنوز توضیحی ثبت نشده")}</small>
       </span>
       <span class="strategy-overview-card__more">توضیحات کامل</span>
     </button>
+  `;
+}
+
+function strategyShowcase(state, strategyStats) {
+  const byName = Object.fromEntries(strategyStats.map((item) => [item.name, item]));
+  return groupStrategies(allStrategies(state)).map((group) => `
+    <section class="strategy-overview-group">
+      <h4 class="strategy-overview-group__title">${escapeHtml(group.label)}</h4>
+      <div class="strategy-overview-group__grid">
+        ${group.strategies.map((strategy) => {
+          const stats = byName[strategy.name] || { decided: 0, winrate: 0, wins: 0, losses: 0, riskFree: 0, total: 0 };
+          return strategyCardHtml(strategy, stats);
+        }).join("")}
+      </div>
+    </section>
   `).join("");
 }
 
@@ -376,6 +512,11 @@ export function renderJournal(state) {
   const all = calcWindowStats(entries, () => true);
   const map = strategyMap(state);
   const goals = state.settings?.goals || state.plan?.goals || {};
+  const strategyStats = calcStrategyStats(entries, allStrategies(state));
+  const tradeStats = all.tradeStats || { decided: 0, wins: 0, losses: 0, riskFree: 0, winrate: 0 };
+  const winrateBadge = tradeStats.decided
+    ? `نرخ برد: ${formatPct(tradeStats.winrate, 0)} (${tradeStats.wins}W/${tradeStats.losses}L)`
+    : "نرخ برد: —";
 
   root.innerHTML = `
     <header class="page-header">
@@ -386,7 +527,7 @@ export function renderJournal(state) {
     <div class="journal-toolbar">
       <div class="u-flex u-gap-3 u-items-center">
         <span class="badge badge--teal">${calcStreak(entries)} روز متوالی</span>
-        <span class="badge badge--success">نرخ برد: ${formatPct(all.winrate, 0)}</span>
+        <span class="badge badge--success num">${winrateBadge}</span>
       </div>
       <div class="u-flex u-gap-2">
         <button class="btn btn-soft" id="btn-manage-strategies">استراتژی‌ها</button>
@@ -401,7 +542,7 @@ export function renderJournal(state) {
     </div>
     <section class="card u-mb-5">
       <div class="u-flex u-justify-between u-items-center u-mb-3" style="flex-wrap:wrap;gap:12px">
-        <div><h3 class="card__title u-mb-0">تقویم</h3><p class="u-text-xs muted u-mb-0 u-mt-2">مبلغ، درصد و استراتژی هر روز روی همان خانه دیده می‌شود.</p></div>
+        <div><h3 class="card__title u-mb-0">تقویم</h3><p class="u-text-xs muted u-mb-0 u-mt-2">مبلغ، درصد و استراتژی هر روز روی همان خانه دیده می‌شود. از جزئیات روز می‌توانی پوشه ویدیو را باز کنی یا Seen بزنی.</p></div>
         <div class="cal-nav">
           <button type="button" class="btn btn-ghost" id="cal-prev">‹</button>
           <div class="field" style="min-width:110px;margin:0"><select id="cal-month">${monthOptions(calMonth)}</select></div>
@@ -415,10 +556,10 @@ export function renderJournal(state) {
     </section>
     <section class="card u-mb-5">
       <div class="u-flex u-justify-between u-items-center u-mb-4">
-        <div><h3 class="card__title u-mb-1">راهنمای استراتژی‌ها</h3><p class="u-text-xs muted u-mb-0">خلاصه استراتژی‌ها؛ برای شرایط ورود و قوانین، کارت را باز کن.</p></div>
+        <div><h3 class="card__title u-mb-1">نرخ برد سیستم‌ها</h3><p class="u-text-xs muted u-mb-0">بر اساس نتیجه هر معامله (سود / ضرر). ریسک‌فری در مخرج نرخ برد حساب نمی‌شود.</p></div>
         <button class="btn btn-soft" id="btn-add-strategy-inline">افزودن استراتژی</button>
       </div>
-      <div class="strategy-overview">${strategyShowcase(state)}</div>
+      <div class="strategy-overview">${strategyShowcase(state, strategyStats)}</div>
     </section>
     <div id="journal-list">${enriched.map((entry) => journalCardHtml(entry, { strategyMap: map })).join("") || `<div class="empty-state">هنوز ژورنالی ثبت نشده.</div>`}</div>
   `;
@@ -470,8 +611,27 @@ export function renderJournal(state) {
 }
 
 function bindCalendarCells(container, entries, map) {
-  container.querySelectorAll("[data-cal-date]").forEach((button) => {
-    button.addEventListener("click", () => openDayCard(button.dataset.calDate, entries, map));
+  container.querySelectorAll("[data-cal-date]").forEach((cell) => {
+    const openDay = () => openDayCard(cell.dataset.calDate, entries, map);
+    cell.addEventListener("click", (event) => {
+      if (event.target.closest("[data-toggle-seen]")) return;
+      openDay();
+    });
+    cell.addEventListener("keydown", (event) => {
+      if (event.target.closest("[data-toggle-seen]")) return;
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openDay();
+      }
+    });
+  });
+  container.querySelectorAll("[data-toggle-seen]").forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      await toggleSeen(button.dataset.toggleSeen);
+      onJournalChanged?.();
+    });
   });
 }
 
@@ -596,7 +756,7 @@ export function bindJournalForm(onSaved) {
   document.getElementById("btn-add-trade")?.addEventListener("click", () => {
     const trades = collectTrades();
     if (trades.length >= MAX_TRADES) return;
-    trades.push(normalizeTrades({})[0]);
+    trades.push(emptyTrade());
     renderTradeEditors(trades);
   });
   document.getElementById("trades-editor-list")?.addEventListener("click", (event) => {
@@ -605,6 +765,14 @@ export function bindJournalForm(onSaved) {
     const card = remove.closest(".trade-editor");
     const trades = collectTrades().filter((_, index) => index !== Number(card.dataset.tradeIndex));
     renderTradeEditors(trades);
+  });
+  document.getElementById("trades-editor-list")?.addEventListener("change", (event) => {
+    const radio = event.target.closest('[data-trade-field="outcome"]');
+    if (!radio) return;
+    const group = radio.closest(".outcome-toggle");
+    group?.querySelectorAll(".outcome-option").forEach((option) => {
+      option.classList.toggle("is-active", option.querySelector("input") === radio);
+    });
   });
   document.getElementById("trades-editor-list")?.addEventListener("input", (event) => {
     if (event.target.type === "range") {
@@ -619,6 +787,10 @@ export function bindJournalForm(onSaved) {
     const trades = collectTrades();
     if (!trades.length || trades.some((trade) => !trade.strategy)) {
       showToast("برای هر معامله یک استراتژی انتخاب کن");
+      return;
+    }
+    if (trades.some((trade) => !trade.outcome)) {
+      showToast("برای هر معامله نتیجه را مشخص کن: سود، ضرر یا ریسک‌فری");
       return;
     }
     const firstTrade = trades[0];

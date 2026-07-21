@@ -1,34 +1,41 @@
 {
   "entries": [
     {
-      "id": "j-2026-07-18",
-      "date": "2026-07-18",
-      "balanceStart": 455.6,
-      "balanceEnd": 451,
-      "strategy": "RV-FBO",
-      "entryQuality": 3,
-      "exitQuality": 3,
-      "rr": 1,
-      "emotion": "کمی طمع",
-      "mistake": "نگه داشتن بیش از حد پس از سیگنال خروج",
-      "lesson": "بازار کاری به TP2 من ندارد؛ روی ناحیه مهم خارج شو.",
-      "notes": "دو ترید؛ دومی بهتر بود ولی کلی منفی.",
-      "ruleFollow": 3
-    },
-    {
-      "id": "j-2026-07-14",
-      "date": "2026-07-14",
-      "balanceStart": 440,
-      "balanceEnd": 448.8,
+      "id": "j-mrur4jl1-7etlg",
+      "date": "2026-07-21",
+      "balanceStart": 446,
+      "balanceEnd": 450,
+      "trades": [
+        {
+          "id": "trade-mruqx07d-wev8g",
+          "strategy": "TR-FBO+",
+          "entryQuality": 3,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "تردید",
+          "notes": "",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-mrur0n5i-x4un1",
+          "strategy": "TR-FBO+",
+          "entryQuality": 5,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "profit"
+        }
+      ],
       "strategy": "TR-FBO+",
-      "entryQuality": 4,
-      "exitQuality": 3,
-      "rr": 2.1,
-      "emotion": "آرام و متمرکز",
-      "mistake": "",
-      "lesson": "صبر برای تأییدیه بعد از فیک بریک نتیجه داد.",
-      "notes": "US30 — ستاپ تمیز در جهت روند.",
-      "ruleFollow": 5
+      "entryQuality": 3,
+      "exitQuality": 5,
+      "rr": 2,
+      "emotion": "تردید",
+      "ruleFollow": 4,
+      "lesson": "سبحان داخل TR هم ترید میزنه بر اساس استراتژی های دیگه ( 50% رنج- BE و ...)",
+      "notes": "وقتی برق نیست و هوا گرمه، ترید زدن واقعا سخته باید خیلی حواسمو جمع کنم و تدارکات سیستم خنک کردن خودمو فراهم کنم",
+      "mediaPath": ""
     }
   ]
 }

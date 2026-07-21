@@ -192,6 +192,12 @@
   border-color: color-mix(in srgb, var(--gold) 28%, transparent);
 }
 
+.badge--orange {
+  background: var(--orange-ghost);
+  color: var(--orange-bright);
+  border-color: color-mix(in srgb, var(--orange) 30%, transparent);
+}
+
 /* ---------- Fields ---------- */
 .field {
   display: flex;

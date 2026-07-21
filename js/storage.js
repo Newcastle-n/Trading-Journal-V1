@@ -2,9 +2,11 @@ const cache = {
   journal: null,
   strategies: null,
   notes: null,
+  booklet: null,
   plan: null,
   settings: null,
   backtests: null,
+  mediaDates: null,
 };
 
 async function getJson(path) {
@@ -27,20 +29,24 @@ async function postJson(path, body) {
 }
 
 export async function loadAll() {
-  const [journal, strategies, notes, plan, settings, backtests] = await Promise.all([
+  const [journal, strategies, notes, booklet, plan, settings, backtests, mediaDates] = await Promise.all([
     getJson("/api/journal"),
     getJson("/api/strategies"),
     getJson("/api/notes"),
+    getJson("/api/booklet").catch(() => getJson("/data/notes-booklet.json")),
     getJson("/data/plan.json"),
     getJson("/api/settings"),
     getJson("/data/backtests.json"),
+    getJson("/api/media-dates").catch(() => ({ dates: [], folders: {}, ok: false })),
   ]);
   cache.journal = journal;
   cache.strategies = strategies;
   cache.notes = notes;
+  cache.booklet = booklet;
   cache.plan = plan;
   cache.settings = settings;
   cache.backtests = backtests;
+  cache.mediaDates = mediaDates;
   return cache;
 }
 
@@ -60,6 +66,12 @@ export async function saveNotes(notes) {
   return saved;
 }
 
+export async function saveBooklet(booklet) {
+  const saved = await postJson("/api/booklet", booklet);
+  cache.booklet = saved;
+  return saved;
+}
+
 export async function saveSettings(settings) {
   const saved = await postJson("/api/settings", settings);
   cache.settings = settings;
@@ -72,16 +84,36 @@ export async function saveStrategies(strategies) {
   return saved;
 }
 
-export async function openMediaFolder({ mediaPath, path, date } = {}) {
+export async function refreshMediaDates() {
+  const mediaDates = await getJson("/api/media-dates");
+  cache.mediaDates = mediaDates;
+  return mediaDates;
+}
+
+export async function openMediaFolder({ mediaPath, path, date, createIfMissing = false } = {}) {
   const folder = (mediaPath || path || "").trim();
   const res = await fetch("/api/open-media", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mediaPath: folder, path: folder, date: date || "" }),
+    body: JSON.stringify({
+      mediaPath: folder,
+      path: folder,
+      date: date || "",
+      createIfMissing: Boolean(createIfMissing),
+    }),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "باز کردن پوشه ممکن نشد");
   return data;
+}
+
+export async function setMediaSeen(date, seen = true) {
+  const settings = { ...(cache.settings || {}) };
+  const mediaSeen = { ...(settings.mediaSeen || {}) };
+  if (seen) mediaSeen[date] = true;
+  else delete mediaSeen[date];
+  settings.mediaSeen = mediaSeen;
+  return saveSettings(settings);
 }
 
 export function upsertJournalEntry(entry) {

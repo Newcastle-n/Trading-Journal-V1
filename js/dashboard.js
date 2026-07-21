@@ -1,5 +1,6 @@
 import {
   calcStreak,
+  calcStrategyStats,
   calcWindowStats,
   enrichEntries,
   escapeHtml,
@@ -14,6 +15,24 @@ import { openModal } from "./components/modal.js";
 function progressPct(actual, goal) {
   if (!goal) return 0;
   return Math.max(0, Math.min(120, (actual / goal) * 100));
+}
+
+function strategyWinrateRows(strategies, entries) {
+  const stats = calcStrategyStats(entries, strategies).filter((item) => item.total > 0);
+  if (!stats.length) {
+    return `<p class="muted u-text-sm">بعد از ثبت نتیجه معاملات، نرخ برد هر سیستم اینجا دیده می‌شود.</p>`;
+  }
+  return stats.map((item) => `
+    <div class="list-row">
+      <span class="u-flex u-items-center u-gap-2">
+        <span class="strategy-chip__swatch" style="background:${escapeHtml(item.color)}"></span>
+        <span class="u-text-sm">${escapeHtml(item.name)}</span>
+      </span>
+      <span class="num u-text-sm ${item.decided ? (item.winrate >= 0.5 ? "profit" : "loss") : "muted"}">
+        ${item.decided ? `${formatPct(item.winrate, 0)} · ${item.wins}W/${item.losses}L` : "—"}
+      </span>
+    </div>
+  `).join("");
 }
 
 export function renderDashboard(state) {
@@ -38,10 +57,22 @@ export function renderDashboard(state) {
     ...(state.strategies?.secondary || []),
   ];
 
-  const recentNotes = (state.notes?.sections || [])
-    .flatMap((s) => s.items.map((i) => ({ ...i, section: s.title })))
-    .filter((i) => i.favorite)
-    .slice(0, 4);
+  const recentNotes =
+    state.notes?.version === 2
+      ? Object.values(state.notes.pages || {})
+          .filter((p) => p.favorite || p.pinned)
+          .sort((a, b) => Number(b.pinned) - Number(a.pinned))
+          .slice(0, 4)
+          .map((p) => ({
+            id: p.id,
+            text: p.title,
+            section: (p.tags && p.tags[0]) || "دانش",
+            favorite: true,
+          }))
+      : (state.notes?.sections || [])
+          .flatMap((s) => s.items.map((i) => ({ ...i, section: s.title })))
+          .filter((i) => i.favorite)
+          .slice(0, 4);
 
   const habitClass = hasToday ? "habit-banner is-done" : "habit-banner";
   const habitTitle = hasToday ? "عالی — ژورنال امروز ثبت شد." : "امروز هنوز ژورنال ثبت نشده";
@@ -116,15 +147,8 @@ export function renderDashboard(state) {
 
     <div class="grid-2">
       <section class="card">
-        <h3 class="card__title">استراتژی‌های فعال</h3>
-        <div class="strategy-chips">
-          ${strategies.slice(0, 11).map((s) => `
-            <span class="strategy-chip">
-              <span class="strategy-chip__swatch" style="background:${s.color}"></span>
-              ${escapeHtml(s.name)}
-            </span>
-          `).join("")}
-        </div>
+        <h3 class="card__title">نرخ برد سیستم‌ها</h3>
+        ${strategyWinrateRows(strategies, entries)}
       </section>
       <section class="card">
         <h3 class="card__title">اخیر</h3>
@@ -140,10 +164,11 @@ export function renderDashboard(state) {
         <div>
           <div class="u-text-xs muted u-mb-2">نکات سنجاق‌شده</div>
           ${recentNotes.map((n) => `
-            <div class="list-row">
+            <button type="button" class="list-row kb-dash-note" data-open-page="${escapeHtml(n.id)}" style="width:100%;text-align:right">
               <span class="u-text-sm u-truncate">${escapeHtml(n.text)}</span>
-            </div>
-          `).join("") || `<p class="muted u-text-sm">نکته‌ای سنجاق نشده.</p>`}
+              <span class="muted u-text-xs">${escapeHtml(n.section)}</span>
+            </button>
+          `).join("") || `<p class="muted u-text-sm">صفحه‌ای سنجاق/علاقه نشده.</p>`}
         </div>
       </section>
     </div>
@@ -161,8 +186,17 @@ export function renderDashboard(state) {
         openModal("modal-morning");
       } else if (action === "open-plan") {
         navigate("knowledge");
-        window.dispatchEvent(new CustomEvent("workspace:open-section", { detail: "trading-plan" }));
+        window.dispatchEvent(new CustomEvent("workspace:open-section", { detail: "plan-overview" }));
       }
+    });
+  });
+
+  root.querySelectorAll("[data-open-page]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      navigate("knowledge");
+      window.dispatchEvent(
+        new CustomEvent("workspace:open-section", { detail: btn.getAttribute("data-open-page") }),
+      );
     });
   });
 }

@@ -1,4 +1,5 @@
 import {
+  FA_LATN,
   formatMoney,
   formatPct,
   todayISO,
@@ -15,6 +16,7 @@ const NAV_ICONS = {
   dashboard: "dashboard",
   journal: "journal",
   knowledge: "knowledge",
+  knowledge2: "book",
   backtests: "backtests",
 };
 
@@ -42,7 +44,7 @@ export function renderSidebar(state) {
   const statusEl = document.getElementById("sidebar-day-status");
 
   if (dateEl) {
-    dateEl.textContent = new Date().toLocaleDateString("fa-IR", {
+    dateEl.textContent = new Date().toLocaleDateString(FA_LATN, {
       weekday: "long",
       day: "numeric",
       month: "long",

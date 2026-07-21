@@ -3,6 +3,50 @@ export const config = {
   defaultView: "dashboard",
 };
 
+/** Locale with Latin digits (1–9) while keeping Persian calendar/weekday names. */
+export const FA_LATN = "fa-IR-u-nu-latn";
+
+export const TRADE_OUTCOMES = [
+  { value: "profit", label: "سود", badge: "badge--success" },
+  { value: "loss", label: "ضرر", badge: "badge--loss" },
+  { value: "riskFree", label: "ریسک‌فری", badge: "badge--orange" },
+];
+
+/** Strategy families for grouped selects / overviews. */
+export const STRATEGY_GROUPS = [
+  { id: "TR", label: "TR — Trading Range", test: (name) => /^TR[\W_]/i.test(name) },
+  { id: "CH", label: "CH — Channel", test: (name) => /^CH[\W_]/i.test(name) },
+  { id: "BE", label: "BE — Break Even", test: (name) => /^BE[\W_]/i.test(name) },
+  { id: "RV", label: "RV — Reverse", test: (name) => /^RV[\W_]/i.test(name) },
+  { id: "DRS", label: "D-R/S — Daily Support/Resistance", test: (name) => /^D-?R\/?S/i.test(name) },
+  { id: "OTHER", label: "سایر", test: () => true },
+];
+
+export function strategyGroupId(name = "") {
+  return STRATEGY_GROUPS.find((group) => group.test(String(name)))?.id || "OTHER";
+}
+
+export function groupStrategies(strategies = []) {
+  const buckets = Object.fromEntries(STRATEGY_GROUPS.map((group) => [group.id, []]));
+  strategies.forEach((strategy) => {
+    buckets[strategyGroupId(strategy.name)].push(strategy);
+  });
+  return STRATEGY_GROUPS
+    .map((group) => ({
+      ...group,
+      strategies: buckets[group.id].sort((a, b) => a.name.localeCompare(b.name, "en")),
+    }))
+    .filter((group) => group.strategies.length);
+}
+
+export function outcomeMeta(value) {
+  return TRADE_OUTCOMES.find((item) => item.value === value) || null;
+}
+
+export function normalizeOutcome(value) {
+  return TRADE_OUTCOMES.some((item) => item.value === value) ? value : "";
+}
+
 export function formatMoney(n, digits = 2) {
   if (n == null || Number.isNaN(n)) return "—";
   return Number(n).toLocaleString("en-US", {
@@ -64,19 +108,92 @@ export function enrichEntries(entries) {
   });
 }
 
+export function tradesOfEntry(entry = {}) {
+  if (Array.isArray(entry.trades) && entry.trades.length) {
+    return entry.trades.map((trade) => ({
+      ...trade,
+      outcome: normalizeOutcome(trade.outcome),
+    }));
+  }
+  if (entry.strategy || entry.emotion || entry.rr != null) {
+    return [{
+      strategy: entry.strategy || "",
+      entryQuality: entry.entryQuality,
+      exitQuality: entry.exitQuality,
+      rr: entry.rr ?? 2,
+      emotion: entry.emotion || "",
+      notes: "",
+      outcome: normalizeOutcome(entry.outcome),
+    }];
+  }
+  return [];
+}
+
+export function flattenTrades(entries) {
+  return (entries || []).flatMap((entry) => (
+    tradesOfEntry(entry).map((trade) => ({
+      ...trade,
+      date: entry.date,
+      entryId: entry.id,
+    }))
+  ));
+}
+
+/** Win rate from decided trades only (profit/loss). Risk-free is tracked separately. */
+export function calcTradeWinrate(trades) {
+  const list = trades || [];
+  const wins = list.filter((t) => t.outcome === "profit").length;
+  const losses = list.filter((t) => t.outcome === "loss").length;
+  const riskFree = list.filter((t) => t.outcome === "riskFree").length;
+  const decided = wins + losses;
+  return {
+    total: list.length,
+    wins,
+    losses,
+    riskFree,
+    decided,
+    winrate: decided ? wins / decided : 0,
+  };
+}
+
+export function calcStrategyStats(entries, strategies = []) {
+  const byName = {};
+  flattenTrades(entries).forEach((trade) => {
+    const name = trade.strategy || "بدون استراتژی";
+    (byName[name] ||= []).push(trade);
+  });
+  const names = new Set([
+    ...strategies.map((s) => s.name).filter(Boolean),
+    ...Object.keys(byName),
+  ]);
+  return [...names]
+    .map((name) => {
+      const strategy = strategies.find((s) => s.name === name) || {};
+      return {
+        name,
+        color: strategy.color || "#34c5b1",
+        description: strategy.description || "",
+        id: strategy.id || "",
+        ...calcTradeWinrate(byName[name] || []),
+      };
+    })
+    .sort((a, b) => b.decided - a.decided || a.name.localeCompare(b.name, "fa"));
+}
+
 export function calcWindowStats(entries, predicate) {
   const list = enrichEntries(entries).filter((e) => predicate(parseISODate(e.date)));
   const pnl = list.reduce((s, e) => s + e.pnl, 0);
-  const wins = list.filter((e) => e.pnl > 0).length;
   const startBal = list.length ? Number(list[0].balanceStart) : 0;
   const pct = startBal ? pnl / startBal : 0;
-  // RR همیشه ثابت است (۲)؛ میانگین هم باید ۲ بماند.
+  // RR همیشه ثابت است (2)؛ میانگین هم باید 2 بماند.
   const avgRr = list.length ? 2 : 0;
+  const tradeStats = calcTradeWinrate(flattenTrades(list));
   return {
     count: list.length,
     pnl,
     pct,
-    winrate: list.length ? wins / list.length : 0,
+    winrate: tradeStats.winrate,
+    tradeStats,
     avgRr,
     list,
   };
@@ -112,7 +229,7 @@ export function getMarketSession(now = new Date()) {
   if (london && ny) name = "لندن + نیویورک";
   else if (london) name = "لندن";
   else if (ny) name = "نیویورک";
-  const time = now.toLocaleTimeString("fa-IR", {
+  const time = now.toLocaleTimeString(FA_LATN, {
     hour: "2-digit",
     minute: "2-digit",
   });
