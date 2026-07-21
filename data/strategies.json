@@ -1,0 +1,125 @@
+{
+  "primary": [
+    {
+      "id": "BE-Line",
+      "name": "BE-Line",
+      "color": "#1E3A5F",
+      "description": "وقتی قیمت روی BE خط روند پین بار می‌زند.",
+      "tested": true
+    },
+    {
+      "id": "TR-BO+",
+      "name": "TR-BO+",
+      "color": "#C9A227",
+      "description": "شکست سقف/کف تریدینگ رنج در جهت روند اصلی.",
+      "tested": true
+    },
+    {
+      "id": "TR-FBO+",
+      "name": "TR-FBO+",
+      "color": "#8B5E3C",
+      "description": "فیک بریک سقف/کف تریدینگ رنج در جهت روند اصلی.",
+      "tested": true
+    },
+    {
+      "id": "CH-BO",
+      "name": "CH-BO",
+      "color": "#7CB342",
+      "description": "شکست سقف/کف روند در جهت روند اصلی.",
+      "tested": true
+    },
+    {
+      "id": "CH-FBO",
+      "name": "CH-FBO",
+      "color": "#2E7D32",
+      "description": "فیک بریک سقف/کف روند.",
+      "tested": true
+    },
+    {
+      "id": "CH-Line-FBO",
+      "name": "CH-Line-FBO",
+      "color": "#A5D6A7",
+      "description": "فیک بریک خط روند.",
+      "tested": true
+    },
+    {
+      "id": "TR-BO-",
+      "name": "TR-BO(-)",
+      "color": "#E57373",
+      "description": "شکست سقف/کف تریدینگ رنج در خلاف جهت روند اصلی.",
+      "tested": true
+    },
+    {
+      "id": "TR-FBO-",
+      "name": "TR-FBO(-)",
+      "color": "#BF360C",
+      "description": "فیک بریک سقف/کف تریدینگ رنج در خلاف جهت روند اصلی.",
+      "tested": true
+    },
+    {
+      "id": "RV-BO",
+      "name": "RV-BO",
+      "color": "#C2185B",
+      "description": "شکست سقف/کف آخرین های یا لو روند اصلی (ترید خلاف جهت).",
+      "tested": true
+    },
+    {
+      "id": "RV-FBO",
+      "name": "RV-FBO",
+      "color": "#F48FB1",
+      "description": "فیک بریک اوت سقف/کف آخرین های یا لو روند اصلی (اولین ری‌اکشن به TR).",
+      "tested": true
+    },
+    {
+      "id": "BE-pullback",
+      "name": "BE-pullback",
+      "color": "#1976D2",
+      "description": "وقتی قیمت قبل باز شدن مارکت سطحی را می‌شکند و بعد به آن پولبک می‌زند.",
+      "tested": true
+    }
+  ],
+  "secondary": [
+    {
+      "id": "BE-Line-BO",
+      "name": "BE-Line-BO",
+      "color": "#0D2137",
+      "description": "وقتی قیمت سطح RS که از بریک‌ایون ترند رسم شده را می‌شکند.",
+      "tested": false
+    },
+    {
+      "id": "D-R/S-BO",
+      "name": "D-R/S-BO",
+      "color": "#F9A825",
+      "description": "شکست سقف/کف روز.",
+      "tested": false
+    },
+    {
+      "id": "D-R/S-FBO",
+      "name": "D-R/S-FBO",
+      "color": "#EF6C00",
+      "description": "فیک بریک سقف/کف روز.",
+      "tested": false
+    },
+    {
+      "id": "BE-RS",
+      "name": "BE-RS",
+      "color": "#1E88E5",
+      "description": "وقتی قیمت روی BE سقف/کف شکسته شده پین بار می‌زند.",
+      "tested": false
+    },
+    {
+      "id": "pullback",
+      "name": "pullback",
+      "color": "#29B6F6",
+      "description": "وقتی قیمت سطحی را می‌شکند و به آن پولبک می‌زند.",
+      "tested": false
+    },
+    {
+      "id": "TR-ptrnORpinbar",
+      "name": "TR-ptrnORpinbar",
+      "color": "#546E7A",
+      "description": "شکست فشردگی قیمت در سقف/کف تریدینگ رنج.",
+      "tested": false
+    }
+  ]
+}

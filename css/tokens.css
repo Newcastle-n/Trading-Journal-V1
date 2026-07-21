@@ -1,0 +1,126 @@
+:root,
+[data-theme="dark"] {
+  /* Surfaces — refined, layered by tone not borders */
+  --bg: #060d0b;
+  --bg-glow-a: rgba(47, 186, 169, 0.13);
+  --bg-glow-b: rgba(201, 162, 74, 0.06);
+  --surface: #0c1714;
+  --card: #111e1a;
+  --card-elevated: #16261f;
+  --card-hover: #1a2d25;
+
+  /* Borders — very subtle, depth from tone */
+  --border: #1f342d;
+  --border-strong: #2a463c;
+
+  /* Teal primary */
+  --primary: #34c5b1;
+  --primary-dim: #1f8f80;
+  --primary-ghost: rgba(52, 197, 177, 0.14);
+
+  /* Gold accent */
+  --gold: #d4a94e;
+  --gold-bright: #ecc56e;
+  --gold-dim: #9a7a32;
+  --gold-ghost: rgba(212, 169, 78, 0.14);
+
+  /* Text — refined hierarchy */
+  --text: #f5fbf8;
+  --text-muted: #93aea4;
+  --text-faint: #647d74;
+
+  --success: #4fd487;
+  --loss: #e08a7f;
+  --warning: #e0b94b;
+  --overlay: rgba(6, 13, 11, 0.72);
+
+  /* Shadows — layered, soft, premium */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.18);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.22), 0 12px 28px rgba(0, 0, 0, 0.28);
+  --shadow-3: 0 8px 20px rgba(0, 0, 0, 0.28), 0 24px 48px rgba(0, 0, 0, 0.34);
+  --shadow-glow: 0 0 0 1px color-mix(in srgb, var(--primary) 25%, transparent), 0 8px 24px color-mix(in srgb, var(--primary) 18%, transparent);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --hairline-glow: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+[data-theme="light"] {
+  --bg: #f4f7f3;
+  --bg-glow-a: rgba(30, 143, 130, 0.1);
+  --bg-glow-b: rgba(184, 146, 47, 0.08);
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card-elevated: #f8fbf8;
+  --card-hover: #f1f6f2;
+
+  --border: #e3ebe6;
+  --border-strong: #d0ddd6;
+
+  --primary: #1a8f80;
+  --primary-dim: #157065;
+  --primary-ghost: rgba(26, 143, 128, 0.1);
+
+  --gold: #b08522;
+  --gold-bright: #cda23a;
+  --gold-dim: #8a6a1a;
+  --gold-ghost: rgba(176, 133, 34, 0.12);
+
+  --text: #14221e;
+  --text-muted: #5a7168;
+  --text-faint: #8aa096;
+
+  --success: #1a9255;
+  --loss: #c45b52;
+  --warning: #b08522;
+  --overlay: rgba(20, 34, 30, 0.4);
+
+  --shadow-1: 0 1px 2px rgba(20, 34, 30, 0.06), 0 2px 6px rgba(20, 34, 30, 0.04);
+  --shadow-2: 0 4px 12px rgba(20, 34, 30, 0.06), 0 12px 28px rgba(20, 34, 30, 0.08);
+  --shadow-3: 0 8px 20px rgba(20, 34, 30, 0.08), 0 24px 48px rgba(20, 34, 30, 0.1);
+  --shadow-glow: 0 0 0 1px color-mix(in srgb, var(--primary) 22%, transparent), 0 8px 24px color-mix(in srgb, var(--primary) 14%, transparent);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --hairline-glow: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+:root {
+  /* Typography */
+  --font-heading: "Peyda", "Vazirmatn", Tahoma, sans-serif;
+  --font-body: "Vazirmatn", Tahoma, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+
+  /* Spacing (8px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+
+  /* Radius — larger, more rounded */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+
+  /* Layout */
+  --sidebar-width: 264px;
+  --header-height: 60px;
+
+  /* Motion — spring-ish for delight */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur: 220ms;
+  --dur-slow: 320ms;
+}

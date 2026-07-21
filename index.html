@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>فضای کاری ترید</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.fontcdn.ir/Font/Persian/Peyda/Peyda.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/animations.css" />
+  <link rel="stylesheet" href="/css/utilities.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("tw-theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand__mark">ژ</div>
+        <div class="sidebar-brand__text">
+          <div class="sidebar-brand__title">فضای کاری ترید</div>
+          <div class="sidebar-brand__sub">آرامش · تمرکز · نظم</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">منو</div>
+        <button class="nav-item is-active" data-nav="dashboard" type="button">
+          <span class="nav-item__icon">◉</span> خانه
+        </button>
+        <button class="nav-item" data-nav="journal" type="button">
+          <span class="nav-item__icon">▣</span> ژورنال
+        </button>
+        <button class="nav-item" data-nav="knowledge" type="button">
+          <span class="nav-item__icon">◈</span> دانش
+        </button>
+        <button class="nav-item" data-nav="backtests" type="button">
+          <span class="nav-item__icon">▦</span> بک‌تست
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-stat">
+          <span class="sidebar-stat__label">امروز</span>
+          <span class="sidebar-stat__value" id="sidebar-date">—</span>
+        </div>
+        <div class="sidebar-stat">
+          <span class="sidebar-stat__label">بالانس</span>
+          <span class="sidebar-stat__value num" id="sidebar-balance">—</span>
+        </div>
+        <div class="sidebar-stat">
+          <span class="sidebar-stat__label">سود هفته</span>
+          <span class="sidebar-stat__value num" id="sidebar-week-pnl">—</span>
+        </div>
+        <div class="sidebar-stat">
+          <span class="sidebar-stat__label">روزهای متوالی</span>
+          <span class="sidebar-stat__value" id="sidebar-streak">—</span>
+        </div>
+        <div id="sidebar-day-status"></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="btn-icon" id="btn-menu" aria-label="منو" type="button">
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </button>
+          <div class="session-pill" id="session-pill">
+            <span class="session-pill__dot"></span>
+            <span>سشن</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button class="search-trigger" id="btn-command" type="button">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <span>جستجو و فرمان…</span>
+            <span class="kbd">Ctrl</span><span class="kbd">K</span>
+          </button>
+          <button class="btn btn-ghost" id="btn-capture" type="button">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            ثبت سریع
+          </button>
+          <button class="btn btn-ghost" id="btn-morning" type="button">صبح</button>
+          <button class="btn btn-ghost" id="btn-eod" type="button">پایان روز</button>
+          <button class="btn-icon" id="btn-theme" type="button" title="تغییر تم روز / شب" aria-label="تغییر تم">
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          </button>
+          <button class="btn-icon" id="btn-settings" type="button" title="تنظیمات" aria-label="تنظیمات">
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="view-root">
+        <section class="view is-active" id="view-dashboard"></section>
+        <section class="view" id="view-journal"></section>
+        <section class="view" id="view-knowledge"></section>
+        <section class="view" id="view-backtests"></section>
+        <section class="view" id="view-settings"></section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Command Palette -->
+  <div class="modal-backdrop" id="modal-command" aria-hidden="true">
+    <div class="modal" role="dialog" aria-label="جستجو و فرمان">
+      <input class="command-input" id="command-input" type="search" placeholder="جستجو یا فرمان… (ژورنال، استراتژی، نکته)" autocomplete="off" />
+      <ul class="command-list" id="command-list"></ul>
+    </div>
+  </div>
+
+  <!-- Day card from calendar -->
+  <div class="modal-backdrop" id="modal-day-card" aria-hidden="true">
+    <div class="modal modal--wide" role="dialog" aria-labelledby="day-card-title">
+      <div class="modal__header">
+        <h3 id="day-card-title" class="u-mb-0">جزئیات روز</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-day-card">بستن</button>
+      </div>
+      <div class="modal__body" id="day-card-body"></div>
+    </div>
+  </div>
+
+  <!-- Journal Form -->
+  <div class="modal-backdrop" id="modal-journal" aria-hidden="true" data-static-backdrop>
+    <div class="modal modal--wide" role="dialog" aria-labelledby="journal-modal-title">
+      <div class="modal__header">
+        <h3 id="journal-modal-title" class="u-mb-0">ثبت ژورنال</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-journal">بستن</button>
+      </div>
+      <form id="journal-form">
+        <div class="modal__body">
+          <input type="hidden" name="id" />
+          <div class="form-grid u-mb-5">
+            <div class="field">
+              <label>تاریخ</label>
+              <input type="date" name="date" required />
+            </div>
+            <div class="field">
+              <div class="field-label-row">
+                <label>بالانس شروع</label>
+                <button class="field-edit-btn" type="button" id="btn-edit-start-balance">ویرایش</button>
+              </div>
+              <input type="number" name="balanceStart" step="0.01" required readonly />
+              <span class="u-text-xs muted" id="balance-source-hint"></span>
+            </div>
+            <div class="field">
+              <label>بالانس نهایی</label>
+              <input type="number" name="balanceEnd" step="0.01" required />
+            </div>
+            <div class="field">
+              <label>سود / زیان خودکار</label>
+              <div id="live-pnl" class="num">—</div>
+            </div>
+            <div class="field">
+              <label>پیروی از قوانین (۱–۵)</label>
+              <input type="range" name="ruleFollow" min="1" max="5" value="3" />
+            </div>
+            <div class="field field--full">
+              <label>درس امروز</label>
+              <textarea name="lesson"></textarea>
+            </div>
+            <div class="field field--full">
+              <label>یادداشت</label>
+              <textarea name="notes"></textarea>
+            </div>
+            <div class="field field--full">
+              <label>مسیر پوشه اسکرین / ویدیو</label>
+              <input type="text" name="mediaPath" placeholder="مثلاً C:\Users\...\Trading\Journal\2026-07-20" dir="ltr" style="text-align:left" />
+              <span class="u-text-xs muted">مسیر کامل پوشه روی سیستم خودت — بعداً با دکمه «اسکرین / ویدیو» باز می‌شود.</span>
+            </div>
+          </div>
+
+          <section class="trades-editor">
+            <div class="trades-editor__head">
+              <div>
+                <h4 class="u-mb-1">معاملات روز</h4>
+                <p class="u-text-xs muted u-mb-0">برای هر روز می‌توانی حداکثر ۴ معامله ثبت کنی.</p>
+              </div>
+              <button class="btn btn-soft" type="button" id="btn-add-trade">افزودن معامله</button>
+            </div>
+            <div id="trades-editor-list"></div>
+          </section>
+        </div>
+        <div class="modal__footer">
+          <button class="btn btn-ghost" type="button" data-close-modal="modal-journal">انصراف</button>
+          <button class="btn btn-primary" type="submit">ذخیره</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Strategy manager -->
+  <div class="modal-backdrop" id="modal-strategies" aria-hidden="true">
+    <div class="modal modal--wide strategy-modal" role="dialog" aria-labelledby="strategy-modal-title">
+      <div class="modal__header">
+        <h3 id="strategy-modal-title" class="u-mb-0">استراتژی‌ها</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-strategies">بستن</button>
+      </div>
+      <div class="modal__body strategy-manager">
+        <aside class="strategy-manager__list">
+          <button class="btn btn-primary u-w-full u-mb-3" type="button" id="btn-new-strategy">افزودن استراتژی</button>
+          <div id="strategy-manager-list"></div>
+        </aside>
+        <form id="strategy-form" class="strategy-manager__form">
+          <input type="hidden" name="originalId" />
+          <div class="form-grid">
+            <div class="field">
+              <label>نام / کد استراتژی</label>
+              <input name="name" required placeholder="مثلاً TR-BO+" />
+            </div>
+            <div class="field">
+              <label>رنگ نشان</label>
+              <input name="color" type="color" value="#34c5b1" />
+            </div>
+            <div class="field field--full">
+              <label>توضیح اصلی</label>
+              <textarea name="description" required></textarea>
+            </div>
+            <div class="field field--full">
+              <label>شرایط ورود</label>
+              <textarea name="conditions"></textarea>
+            </div>
+            <div class="field field--full">
+              <label>قوانین و فیلترها</label>
+              <textarea name="rules"></textarea>
+            </div>
+            <div class="field field--full">
+              <label>اشتباهات رایج</label>
+              <textarea name="commonMistakes"></textarea>
+            </div>
+            <div class="field field--full">
+              <label>مثال‌ها و یادداشت تکمیلی</label>
+              <textarea name="examples"></textarea>
+            </div>
+          </div>
+          <div class="modal__footer strategy-manager__actions">
+            <button class="btn btn-danger" type="button" id="btn-delete-strategy">حذف استراتژی</button>
+            <button class="btn btn-primary" type="submit">ذخیره استراتژی</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Morning Checklist -->
+  <div class="modal-backdrop" id="modal-morning" aria-hidden="true">
+    <div class="modal" role="dialog">
+      <div class="modal__header">
+        <h3 class="u-mb-0">چک‌لیست صبح</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-morning">بستن</button>
+      </div>
+      <div class="modal__body" id="morning-list"></div>
+      <div class="modal__footer">
+        <button class="btn btn-primary" type="button" id="morning-done">آماده‌ام</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EOD -->
+  <div class="modal-backdrop" id="modal-eod" aria-hidden="true">
+    <div class="modal" role="dialog">
+      <div class="modal__header">
+        <h3 class="u-mb-0">مرور پایان روز</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-eod">بستن</button>
+      </div>
+      <div class="modal__body" id="eod-list"></div>
+      <div class="modal__footer">
+        <button class="btn btn-primary" type="button" id="eod-to-journal">ادامه → ثبت ژورنال</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Capture -->
+  <div class="modal-backdrop" id="modal-capture" aria-hidden="true">
+    <div class="modal" role="dialog">
+      <div class="modal__header">
+        <h3 class="u-mb-0">ثبت سریع نکته</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-capture">بستن</button>
+      </div>
+      <form id="capture-form">
+        <div class="modal__body">
+          <div class="field">
+            <label>نکته سریع</label>
+            <textarea name="note" required placeholder="یک ایده، اشتباه، یا مشاهده…"></textarea>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn btn-primary" type="submit">ثبت</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="modal-backdrop" id="modal-settings" aria-hidden="true">
+    <div class="modal" role="dialog">
+      <div class="modal__header">
+        <h3 class="u-mb-0">تنظیمات</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-settings">بستن</button>
+      </div>
+      <form id="settings-form">
+        <div class="modal__body form-grid">
+          <div class="field field--full">
+            <label>نام</label>
+            <input name="userName" type="text" />
+          </div>
+          <div class="field field--full">
+            <label>مسیر پایه پیش‌فرض (اختیاری)</label>
+            <input name="mediaBasePath" type="text" placeholder="اگر در ژورنال مسیر ننویسی، از این + تاریخ استفاده می‌شود" dir="ltr" style="text-align:left" />
+          </div>
+          <div class="field">
+            <label>هدف روز ٪</label>
+            <input name="dailyPct" type="number" step="0.1" />
+          </div>
+          <div class="field">
+            <label>هدف هفته ٪</label>
+            <input name="weeklyPct" type="number" step="0.1" />
+          </div>
+          <div class="field">
+            <label>هدف ماه ٪</label>
+            <input name="monthlyPct" type="number" step="0.1" />
+          </div>
+          <div class="field field--full">
+            <label>تم پیش‌فرض</label>
+            <select name="theme">
+              <option value="dark">شب</option>
+              <option value="light">روز</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn btn-primary" type="submit">ذخیره تنظیمات</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toast-stack"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
