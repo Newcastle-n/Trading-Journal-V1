@@ -5,6 +5,11 @@
   min-height: 100vh;
   position: relative;
   z-index: 1;
+  transition: grid-template-columns var(--dur) var(--ease);
+}
+
+.app-shell.is-sidebar-collapsed {
+  grid-template-columns: var(--sidebar-collapsed-width) 1fr;
 }
 
 /* ---------- Sidebar ---------- */
@@ -22,6 +27,40 @@
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   z-index: 40;
+  overflow: hidden;
+  transition: padding var(--dur) var(--ease);
+}
+
+.app-shell.is-sidebar-collapsed .sidebar {
+  padding: var(--space-4) var(--space-2);
+  gap: var(--space-4);
+}
+
+.app-shell.is-sidebar-collapsed .sidebar-brand {
+  justify-content: center;
+  padding: var(--space-2) 0 var(--space-3);
+}
+
+.app-shell.is-sidebar-collapsed .sidebar-brand__text,
+.app-shell.is-sidebar-collapsed .nav-section-label,
+.app-shell.is-sidebar-collapsed .sidebar-footer {
+  display: none;
+}
+
+.app-shell.is-sidebar-collapsed .nav-item {
+  justify-content: center;
+  padding: 12px;
+  font-size: 0;
+  gap: 0;
+}
+
+.app-shell.is-sidebar-collapsed .nav-item .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.app-shell.is-sidebar-collapsed .nav-item.is-active::before {
+  inset-inline-end: 2px;
 }
 
 .sidebar-brand {
@@ -320,7 +359,8 @@
 }
 
 @media (max-width: 980px) {
-  .app-shell {
+  .app-shell,
+  .app-shell.is-sidebar-collapsed {
     grid-template-columns: 1fr;
   }
 
@@ -335,6 +375,32 @@
     transition: transform var(--dur) var(--ease);
     border-left: 1px solid var(--border);
     border-right: none;
+    padding: var(--space-5) var(--space-4) var(--space-4);
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-brand {
+    display: flex;
+    justify-content: flex-start;
+    padding: var(--space-2) var(--space-2) var(--space-4);
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-brand__text {
+    display: flex;
+  }
+
+  .app-shell.is-sidebar-collapsed .nav-section-label {
+    display: block;
+  }
+
+  .app-shell.is-sidebar-collapsed .sidebar-footer {
+    display: flex;
+  }
+
+  .app-shell.is-sidebar-collapsed .nav-item {
+    justify-content: flex-start;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    gap: var(--space-3);
   }
 
   .sidebar.is-open {

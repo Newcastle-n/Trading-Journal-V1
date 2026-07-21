@@ -219,7 +219,7 @@
   justify-content: flex-start;
   gap: 4px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   color: var(--text-faint);
   cursor: pointer;
   padding: 9px;
@@ -228,22 +228,28 @@
   transition: transform var(--dur-fast) var(--ease-spring), border-color var(--dur-fast) var(--ease);
 }
 
+.cal-cell--weekend-merged {
+  grid-column: span 2;
+  /* Keep the same height as normal single-day cards. */
+  aspect-ratio: 2 / 1;
+}
+
 .cal-cell__day {
   align-self: flex-start;
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 .cal-cell__pnl {
   margin-top: auto;
   color: currentColor;
-  font-size: clamp(0.62rem, 0.9vw, 0.82rem);
+  font-size: clamp(0.72rem, 1.1vw, 1.0rem);
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .cal-cell__pct {
-  font-size: 0.66rem;
+  font-size: 0.8rem;
 }
 
 .cal-cell__strategy {
@@ -715,7 +721,7 @@
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--gold-bright);
   margin-bottom: var(--space-2);
   letter-spacing: 0.04em;
 }
@@ -733,19 +739,20 @@
 }
 
 .kb-leaf {
-  padding: var(--space-4);
+  position: relative;
+  padding: 12px 14px 36px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 14%, var(--border));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 4%, transparent), transparent 48%), color-mix(in srgb, var(--surface) 78%, transparent);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  min-height: 140px;
+  gap: 0;
+  min-height: 0;
   transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast) var(--ease);
 }
 
 .kb-leaf:hover {
-  border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+  border-color: color-mix(in srgb, var(--gold) 38%, var(--border));
   transform: translateY(-2px);
   box-shadow: var(--shadow-1);
 }
@@ -771,10 +778,59 @@
 
 .kb-leaf__text {
   margin: 0;
-  flex: 1;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 8px;
   font-size: var(--text-sm);
   color: var(--text);
-  line-height: 1.85;
+  line-height: 1.7;
+}
+
+.kb-leaf__text-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: justify;
+}
+
+.kb-leaf__num-inline {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--gold-bright);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  flex: 0 0 auto;
+}
+
+.kb-pin-btn {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text-faint);
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  margin: 0;
+}
+
+.kb-pin-btn.is-active {
+  background: var(--gold-ghost);
+  border-color: color-mix(in srgb, var(--gold) 30%, var(--border));
+  color: var(--gold-bright);
+}
+
+.kb-pin-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
 }
 
 .kb-leaf__tags {

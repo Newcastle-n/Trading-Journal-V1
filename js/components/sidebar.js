@@ -68,6 +68,29 @@ export function renderSidebar(state) {
   });
 }
 
+const SIDEBAR_COLLAPSED_KEY = "tw-sidebar-collapsed";
+
+function isMobileSidebar() {
+  return window.matchMedia("(max-width: 980px)").matches;
+}
+
+function applySidebarCollapsed(collapsed) {
+  const shell = document.querySelector(".app-shell");
+  const menuBtn = document.getElementById("btn-menu");
+  if (!shell) return;
+  shell.classList.toggle("is-sidebar-collapsed", collapsed);
+  if (menuBtn) {
+    menuBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    menuBtn.title = collapsed ? "باز کردن سایدبار" : "جمع کردن سایدبار";
+    menuBtn.setAttribute("aria-label", menuBtn.title);
+  }
+  try {
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
+}
+
 export function bindSidebar() {
   document.querySelectorAll("[data-nav]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -76,8 +99,21 @@ export function bindSidebar() {
     });
   });
 
+  let collapsed = false;
+  try {
+    collapsed = localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
+  } catch {
+    collapsed = false;
+  }
+  applySidebarCollapsed(collapsed);
+
   document.getElementById("btn-menu")?.addEventListener("click", () => {
-    document.getElementById("sidebar")?.classList.toggle("is-open");
+    if (isMobileSidebar()) {
+      document.getElementById("sidebar")?.classList.toggle("is-open");
+      return;
+    }
+    const shell = document.querySelector(".app-shell");
+    applySidebarCollapsed(!shell?.classList.contains("is-sidebar-collapsed"));
   });
 }
 

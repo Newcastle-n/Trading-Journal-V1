@@ -18,7 +18,7 @@
           "tags": [
             "هدف"
           ],
-          "favorite": true
+          "favorite": false
         },
         {
           "id": "tp-3",
@@ -395,7 +395,7 @@
           "tags": [
             "بقا"
           ],
-          "favorite": true
+          "favorite": false
         },
         {
           "id": "sb-35",
@@ -846,7 +846,16 @@
     {
       "id": "quick",
       "title": "یادداشت‌های سریع",
-      "items": []
+      "items": [
+        {
+          "id": "qc-mrufx146-0ny8s",
+          "text": "2leg",
+          "tags": [
+            "quick"
+          ],
+          "favorite": false
+        }
+      ]
     }
   ]
 }

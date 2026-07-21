@@ -70,15 +70,8 @@ export function calcWindowStats(entries, predicate) {
   const wins = list.filter((e) => e.pnl > 0).length;
   const startBal = list.length ? Number(list[0].balanceStart) : 0;
   const pct = startBal ? pnl / startBal : 0;
-  const tradeRrs = list.flatMap((entry) => {
-    if (Array.isArray(entry.trades)) {
-      return entry.trades.map((trade) => Number(trade.rr)).filter(Number.isFinite);
-    }
-    const rr = Number(entry.rr);
-    return Number.isFinite(rr) ? [rr] : [];
-  });
-  const avgRr =
-    tradeRrs.length > 0 ? tradeRrs.reduce((sum, rr) => sum + rr, 0) / tradeRrs.length : 0;
+  // RR همیشه ثابت است (۲)؛ میانگین هم باید ۲ بماند.
+  const avgRr = list.length ? 2 : 0;
   return {
     count: list.length,
     pnl,

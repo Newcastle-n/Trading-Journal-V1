@@ -186,7 +186,7 @@ function bindChecklists() {
 
   document.getElementById("morning-done")?.addEventListener("click", () => {
     closeModal("modal-morning");
-    showToast("چک‌لیست صبح آماده است. موفق باشی.");
+    showToast("چک لیست آماده است. موفق باشی.");
   });
 
   document.getElementById("eod-to-journal")?.addEventListener("click", () => {

@@ -83,7 +83,7 @@ export function renderDashboard(state) {
             <span class="quick-action__hint">مرور ژورنال</span>
           </button>
           <button class="quick-action" data-action="morning">
-            <span class="quick-action__label">چک‌لیست صبح</span>
+            <span class="quick-action__label">چک لیست</span>
             <span class="quick-action__hint">قبل از ترید</span>
           </button>
           <button class="quick-action" data-action="open-plan">

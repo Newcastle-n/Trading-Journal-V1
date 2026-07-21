@@ -1,4 +1,5 @@
 import { escapeHtml } from "./config.js";
+import { icon } from "./components/icons.js";
 import { saveNotes, getState } from "./storage.js";
 import { showToast } from "./components/toast.js";
 
@@ -76,18 +77,20 @@ export function renderKnowledge(state) {
               .map(
                 (item, i) => `
               <article class="kb-leaf">
-                <div class="kb-leaf__head">
-                  <span class="kb-leaf__num">${i + 1}</span>
-                  <button class="btn btn-ghost" type="button" data-toggle-fav="${escapeHtml(item.id)}" data-section="${escapeHtml(current.section.id)}" title="سنجاق">
-                    ${item.favorite ? "★" : "☆"}
-                  </button>
-                </div>
-                <p class="kb-leaf__text">${escapeHtml(item.text)}</p>
-                <div class="kb-leaf__tags">
-                  ${(item.tags || [])
-                    .map((t) => `<span class="badge badge--teal">${escapeHtml(t)}</span>`)
-                    .join("")}
-                </div>
+                <p class="kb-leaf__text">
+                  <span class="kb-leaf__num-inline">${String(i + 1).padStart(2, "0")}</span>
+                  <span class="kb-leaf__text-main">${escapeHtml(item.text)}</span>
+                </p>
+                <button
+                  class="kb-pin-btn ${item.favorite ? "is-active" : ""}"
+                  type="button"
+                  data-toggle-fav="${escapeHtml(item.id)}"
+                  data-section="${escapeHtml(current.section.id)}"
+                  title="سنجاق"
+                  aria-label="سنجاق"
+                >
+                  ${item.favorite ? icon("star", 14) : icon("starOff", 14)}
+                </button>
               </article>
             `,
               )

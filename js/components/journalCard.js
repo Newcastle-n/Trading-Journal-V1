@@ -53,7 +53,7 @@ export function journalCardHtml(entry, { strategyMap = {} } = {}) {
               <div class="journal-trade__metrics">
                 <span>ورود <b>${trade.entryQuality || "—"}/۵</b></span>
                 <span>خروج <b>${trade.exitQuality || "—"}/۵</b></span>
-                <span>R:R <b>${trade.rr != null ? Number(trade.rr).toFixed(1) : "—"}</b></span>
+                <span>R:R <b>${(2).toFixed(1)}</b></span>
               </div>
               ${trade.emotion ? `<p>${escapeHtml(trade.emotion)}</p>` : ""}
               ${trade.notes ? `<p>${escapeHtml(trade.notes)}</p>` : ""}

@@ -103,7 +103,7 @@ export function buildSearchIndex(state) {
     { type: "command", id: "c-new-j", title: "ثبت ژورنال جدید", subtitle: "ژورنال", action: { type: "new-journal" } },
     { type: "command", id: "c-dash", title: "رفتن به خانه", subtitle: "ناوبری", action: { type: "view", view: "dashboard" } },
     { type: "command", id: "c-plan", title: "پلن معاملاتی", subtitle: "دانش", action: { type: "view", view: "knowledge", section: "trading-plan" } },
-    { type: "command", id: "c-morning", title: "چک‌لیست صبح", subtitle: "روال", action: { type: "morning" } },
+    { type: "command", id: "c-morning", title: "چک لیست", subtitle: "روال", action: { type: "morning" } },
     { type: "command", id: "c-eod", title: "مرور پایان روز", subtitle: "روال", action: { type: "eod" } },
     { type: "command", id: "c-settings", title: "تنظیمات", subtitle: "فضای کاری", action: { type: "settings" } },
     { type: "command", id: "c-capture", title: "ثبت سریع نکته", subtitle: "نکته", action: { type: "capture" } },

@@ -1,33 +1,33 @@
 :root,
 [data-theme="dark"] {
   /* Surfaces — refined, layered by tone not borders */
-  --bg: #060d0b;
+  --bg: #050a09;
   --bg-glow-a: rgba(47, 186, 169, 0.13);
-  --bg-glow-b: rgba(201, 162, 74, 0.06);
-  --surface: #0c1714;
-  --card: #111e1a;
-  --card-elevated: #16261f;
-  --card-hover: #1a2d25;
+  --bg-glow-b: rgba(212, 169, 78, 0.12);
+  --surface: #0b1512;
+  --card: #12201b;
+  --card-elevated: #182a23;
+  --card-hover: #1d3128;
 
   /* Borders — very subtle, depth from tone */
-  --border: #1f342d;
-  --border-strong: #2a463c;
+  --border: #2a4339;
+  --border-strong: #3a5b4d;
 
   /* Teal primary */
-  --primary: #34c5b1;
-  --primary-dim: #1f8f80;
-  --primary-ghost: rgba(52, 197, 177, 0.14);
+  --primary: #42d2bd;
+  --primary-dim: #279f90;
+  --primary-ghost: rgba(66, 210, 189, 0.16);
 
   /* Gold accent */
-  --gold: #d4a94e;
-  --gold-bright: #ecc56e;
-  --gold-dim: #9a7a32;
-  --gold-ghost: rgba(212, 169, 78, 0.14);
+  --gold: #ddb45a;
+  --gold-bright: #f3d27d;
+  --gold-dim: #b08834;
+  --gold-ghost: rgba(221, 180, 90, 0.18);
 
   /* Text — refined hierarchy */
-  --text: #f5fbf8;
-  --text-muted: #93aea4;
-  --text-faint: #647d74;
+  --text: #fbfdfc;
+  --text-muted: #b0c3bc;
+  --text-faint: #7f988f;
 
   --success: #4fd487;
   --loss: #e08a7f;
@@ -44,29 +44,29 @@
 }
 
 [data-theme="light"] {
-  --bg: #f4f7f3;
+  --bg: #f7f4ed;
   --bg-glow-a: rgba(30, 143, 130, 0.1);
-  --bg-glow-b: rgba(184, 146, 47, 0.08);
-  --surface: #ffffff;
+  --bg-glow-b: rgba(176, 133, 34, 0.14);
+  --surface: #fffdfa;
   --card: #ffffff;
-  --card-elevated: #f8fbf8;
-  --card-hover: #f1f6f2;
+  --card-elevated: #fffaf0;
+  --card-hover: #f9f1df;
 
-  --border: #e3ebe6;
-  --border-strong: #d0ddd6;
+  --border: #d9dfd8;
+  --border-strong: #bfc9c1;
 
-  --primary: #1a8f80;
-  --primary-dim: #157065;
-  --primary-ghost: rgba(26, 143, 128, 0.1);
+  --primary: #198f80;
+  --primary-dim: #136f63;
+  --primary-ghost: rgba(25, 143, 128, 0.12);
 
-  --gold: #b08522;
-  --gold-bright: #cda23a;
-  --gold-dim: #8a6a1a;
-  --gold-ghost: rgba(176, 133, 34, 0.12);
+  --gold: #b78a25;
+  --gold-bright: #d5aa47;
+  --gold-dim: #8e6a16;
+  --gold-ghost: rgba(183, 138, 37, 0.14);
 
-  --text: #14221e;
-  --text-muted: #5a7168;
-  --text-faint: #8aa096;
+  --text: #10201a;
+  --text-muted: #4e655d;
+  --text-faint: #748980;
 
   --success: #1a9255;
   --loss: #c45b52;
@@ -114,6 +114,7 @@
 
   /* Layout */
   --sidebar-width: 264px;
+  --sidebar-collapsed-width: 72px;
   --header-height: 60px;
 
   /* Motion — spring-ish for delight */

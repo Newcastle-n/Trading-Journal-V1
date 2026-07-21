@@ -51,7 +51,7 @@ function normalizeTrades(entry = {}) {
       strategy: trade.strategy || "",
       entryQuality: Number(trade.entryQuality) || 3,
       exitQuality: Number(trade.exitQuality) || 3,
-      rr: trade.rr ?? "",
+      rr: 2,
       emotion: trade.emotion || "",
       notes: trade.notes || "",
     }));
@@ -62,7 +62,7 @@ function normalizeTrades(entry = {}) {
       strategy: entry.strategy || "",
       entryQuality: Number(entry.entryQuality) || 3,
       exitQuality: Number(entry.exitQuality) || 3,
-      rr: entry.rr ?? "",
+      rr: 2,
       emotion: entry.emotion || "",
       notes: "",
     }];
@@ -72,7 +72,7 @@ function normalizeTrades(entry = {}) {
     strategy: "",
     entryQuality: 3,
     exitQuality: 3,
-    rr: "",
+    rr: 2,
     emotion: "",
     notes: "",
   }];
@@ -98,10 +98,6 @@ function tradeEditorHtml(trade, index) {
         <div class="field">
           <label>استراتژی</label>
           <select data-trade-field="strategy">${strategyOptions(trade.strategy)}</select>
-        </div>
-        <div class="field">
-          <label>ریسک‌به‌ریوارد</label>
-          <input data-trade-field="rr" type="number" step="0.1" value="${escapeHtml(trade.rr)}" />
         </div>
         <div class="field range-field">
           <div class="field-label-row">
@@ -148,7 +144,8 @@ function collectTrades() {
       strategy: get("strategy"),
       entryQuality: Number(get("entryQuality")),
       exitQuality: Number(get("exitQuality")),
-      rr: get("rr") === "" ? null : Number(get("rr")),
+      // RR همیشه ثابت است.
+      rr: 2,
       emotion: get("emotion").trim(),
       notes: get("notes").trim(),
     };
@@ -208,7 +205,30 @@ function calendarCell(entry, iso, day, weekSummary) {
   const pnlClass = entry ? (entry.pnl >= 0 ? "is-profit" : "is-loss") : "";
   const todayClass = iso === todayISO() ? "is-today" : "";
   const dayOfWeek = new Date(`${iso}T12:00:00`).getDay();
-  if (dayOfWeek === 0 || dayOfWeek === 6) {
+  if (dayOfWeek === 6) {
+    // Saturday: merge Saturday+Sunday into one spanning card.
+    const next = new Date(`${iso}T12:00:00`);
+    next.setDate(next.getDate() + 1);
+    const nextDayNum = next.getDate();
+    const [, curMonth] = iso.split("-").map((x) => Number(x));
+    const sameMonthAsNext = next.getMonth() + 1 === curMonth;
+    const summaryClass = weekSummary
+      ? (weekSummary.pnl >= 0 ? "is-profit" : "is-loss")
+      : "";
+    return `
+      <div class="cal-cell cal-cell--weekend-merged is-weekend ${summaryClass} ${todayClass}">
+        <span class="cal-cell__day">${sameMonthAsNext ? `ش${day} · ی${nextDayNum}` : "آخر هفته"}</span>
+        <span class="cal-cell__week-label">جمع هفته</span>
+        ${weekSummary ? `
+          <strong class="cal-cell__pnl">${formatMoney(weekSummary.pnl)}</strong>
+          <span class="cal-cell__pct">${formatPct(weekSummary.pct)}</span>
+          <span class="cal-cell__strategy">${weekSummary.count} روز معاملاتی</span>
+        ` : `<span class="cal-cell__closed">بازار تعطیل</span>`}
+      </div>
+    `;
+  }
+  if (dayOfWeek === 0) {
+    // Sunday at month start (no Saturday to merge with).
     const summaryClass = weekSummary
       ? (weekSummary.pnl >= 0 ? "is-profit" : "is-loss")
       : "";
@@ -250,6 +270,10 @@ function buildCalendar(entries, year, month) {
   const days = new Date(year, month + 1, 0).getDate();
   for (let day = 1; day <= days; day += 1) {
     const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    // When Sunday is directly after Saturday, Sunday is merged into Saturday's spanning card.
+    // We skip rendering Sunday (except when it's the 1st day of the month).
+    const dow = new Date(`${iso}T12:00:00`).getDay();
+    if (dow === 0 && day > 1) continue;
     cells.push(calendarCell(byDate[iso], iso, day, byWeek[weekStartKey(iso)]));
   }
   return cells.join("");
