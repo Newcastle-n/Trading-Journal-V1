@@ -88,7 +88,7 @@
 }
 
 :root {
-  /* Typography — only Peyda + Vazirmatn */
+  /* Typography — local Vazirmatn (Peyda aliased to same files in fonts.css) */
   --font-heading: "Peyda", "Vazirmatn", sans-serif;
   --font-body: "Vazirmatn", "Peyda", sans-serif;
   --font-mono: "Vazirmatn", "Peyda", sans-serif;

@@ -1,0 +1,115 @@
+/* Self-hosted Vazirmatn — no CDN dependency */
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Thin.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Light.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Medium.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-SemiBold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-ExtraBold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Black.ttf") format("truetype");
+}
+
+/* Peyda CDN is broken; alias headings to local Vazirmatn */
+@font-face {
+  font-family: "Peyda";
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Thin.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Peyda";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Light.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Peyda";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Peyda";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Medium.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Peyda";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-SemiBold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Peyda";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Peyda";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-ExtraBold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Peyda";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Black.ttf") format("truetype");
+}

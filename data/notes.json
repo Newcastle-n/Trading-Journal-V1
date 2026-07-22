@@ -1,9 +1,8 @@
 {
   "version": 2,
-  "activePageId": "course-v",
+  "activePageId": "wiki-home",
   "expandedCats": [
-    "cat-course",
-    "cat-checklists"
+    "cat-home"
   ],
   "tree": [
     {
