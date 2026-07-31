@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>فضای کاری ترید</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/assets/trading-journal-icon.png" type="image/png" sizes="1024x1024" />
+  <link rel="apple-touch-icon" href="/assets/trading-journal-icon.png" />
   <link rel="stylesheet" href="/css/fonts.css" />
   <link rel="stylesheet" href="/css/tokens.css" />
   <link rel="stylesheet" href="/css/base.css" />
@@ -40,11 +43,8 @@
         <button class="nav-item" data-nav="journal" type="button" title="ژورنال">
           <span class="nav-item__icon">▣</span> ژورنال
         </button>
-        <button class="nav-item" data-nav="knowledge" type="button" title="دانش">
+        <button class="nav-item" data-nav="knowledge2" type="button" title="دانش">
           <span class="nav-item__icon">◈</span> دانش
-        </button>
-        <button class="nav-item" data-nav="knowledge2" type="button" title="دانش ۲">
-          <span class="nav-item__icon">◇</span> دانش ۲
         </button>
         <button class="nav-item" data-nav="backtests" type="button" title="بک‌تست">
           <span class="nav-item__icon">▦</span> بک‌تست
@@ -107,7 +107,6 @@
       <div class="view-root">
         <section class="view is-active" id="view-dashboard"></section>
         <section class="view" id="view-journal"></section>
-        <section class="view" id="view-knowledge"></section>
         <section class="view" id="view-knowledge2"></section>
         <section class="view" id="view-backtests"></section>
         <section class="view" id="view-settings"></section>
@@ -131,6 +130,62 @@
         <button class="btn btn-ghost" type="button" data-close-modal="modal-day-card">بستن</button>
       </div>
       <div class="modal__body" id="day-card-body"></div>
+    </div>
+  </div>
+
+  <!-- Backtest day card from calendar -->
+  <div class="modal-backdrop" id="modal-backtest-day" aria-hidden="true" data-static-backdrop>
+    <div class="modal modal--wide" role="dialog" aria-labelledby="backtest-day-card-title">
+      <div class="modal__header">
+        <h3 id="backtest-day-card-title" class="u-mb-0">جزئیات بک‌تست</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-backtest-day">بستن</button>
+      </div>
+      <div class="modal__body" id="backtest-day-card-body"></div>
+    </div>
+  </div>
+
+  <!-- Backtest Form -->
+  <div class="modal-backdrop" id="modal-backtest" aria-hidden="true" data-static-backdrop>
+    <div class="modal modal--wide" role="dialog" aria-labelledby="backtest-modal-title">
+      <div class="modal__header">
+        <h3 id="backtest-modal-title" class="u-mb-0">ثبت بک‌تست</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-backtest">بستن</button>
+      </div>
+      <form id="backtest-form">
+        <div class="modal__body">
+          <input type="hidden" name="id" />
+          <div class="form-grid u-mb-5">
+            <div class="field">
+              <label>تاریخ</label>
+              <input type="date" name="date" required />
+            </div>
+            <div class="field field--full">
+              <label>یادداشت</label>
+              <textarea name="notes"></textarea>
+            </div>
+            <div class="field field--full">
+              <label>مسیر پوشه اسکرین / ویدیو</label>
+              <input type="text" name="mediaPath" placeholder="E:\Desktop\LevelsReaction\SobhanSamadi System\SSNT Live Trades\2026-7-30" dir="ltr" style="text-align:left" />
+              <span class="u-text-xs muted">مسیر کامل پوشه روی سیستم خودت — بعداً با دکمه «اسکرین / ویدیو» باز می‌شود.</span>
+            </div>
+          </div>
+
+          <section class="trades-editor">
+            <div class="trades-editor__head">
+              <div>
+                <h4 class="u-mb-1">معاملات بک‌تست</h4>
+                <p class="u-text-xs muted u-mb-0">برای هر روز حداکثر ۴ معامله. هر معامله نتیجه سود / ضرر / ریسک‌فری دارد؛ نتیجه فیلترها فقط برای وین‌ریت خود فیلتر است.</p>
+              </div>
+              <button class="btn btn-soft" type="button" id="btn-add-backtest-trade">افزودن معامله</button>
+            </div>
+            <div id="backtest-trades-editor-list"></div>
+          </section>
+        </div>
+        <div class="modal__footer">
+          <button class="btn btn-ghost" type="button" data-close-modal="modal-backtest">انصراف</button>
+          <button class="btn btn-primary" type="submit">ذخیره</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -179,7 +234,7 @@
             </div>
             <div class="field field--full">
               <label>مسیر پوشه اسکرین / ویدیو</label>
-              <input type="text" name="mediaPath" placeholder="مثلاً C:\Users\...\Trading\Journal\2026-07-20" dir="ltr" style="text-align:left" />
+              <input type="text" name="mediaPath" placeholder="E:\Desktop\LevelsReaction\SobhanSamadi System\SSNT Live Trades\2026-7-30" dir="ltr" style="text-align:left" />
               <span class="u-text-xs muted">مسیر کامل پوشه روی سیستم خودت — بعداً با دکمه «اسکرین / ویدیو» باز می‌شود.</span>
             </div>
           </div>
@@ -188,7 +243,7 @@
             <div class="trades-editor__head">
               <div>
                 <h4 class="u-mb-1">معاملات روز</h4>
-                <p class="u-text-xs muted u-mb-0">برای هر روز می‌توانی حداکثر 4 معامله ثبت کنی.</p>
+                <p class="u-text-xs muted u-mb-0">برای هر روز حداکثر ۴ معامله. هر معامله نتیجه سود / ضرر / ریسک‌فری دارد؛ نتیجه فیلترها فقط برای وین‌ریت خود فیلتر است.</p>
               </div>
               <button class="btn btn-soft" type="button" id="btn-add-trade">افزودن معامله</button>
             </div>
@@ -247,9 +302,54 @@
               <textarea name="examples"></textarea>
             </div>
           </div>
+          <div class="strategy-manager__related" id="strategy-related-links" hidden>
+            <button class="btn btn-soft" type="button" id="btn-strategy-journals">ژورنال‌های این استراتژی</button>
+            <button class="btn btn-soft" type="button" id="btn-strategy-backtests">بک‌تست‌های این استراتژی</button>
+          </div>
           <div class="modal__footer strategy-manager__actions">
             <button class="btn btn-danger" type="button" id="btn-delete-strategy">حذف استراتژی</button>
             <button class="btn btn-primary" type="submit">ذخیره استراتژی</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trade filter manager -->
+  <div class="modal-backdrop" id="modal-trade-filters" aria-hidden="true" data-static-backdrop>
+    <div class="modal modal--wide strategy-modal" role="dialog" aria-labelledby="trade-filter-modal-title">
+      <div class="modal__header">
+        <h3 id="trade-filter-modal-title" class="u-mb-0">فیلترهای معاملاتی</h3>
+        <button class="btn btn-ghost" type="button" data-close-modal="modal-trade-filters">بستن</button>
+      </div>
+      <div class="modal__body strategy-manager">
+        <aside class="strategy-manager__list">
+          <button class="btn btn-primary u-w-full u-mb-3" type="button" id="btn-new-trade-filter">افزودن فیلتر</button>
+          <div id="trade-filter-manager-list"></div>
+        </aside>
+        <form id="trade-filter-form" class="strategy-manager__form">
+          <input type="hidden" name="originalId" />
+          <div class="form-grid">
+            <div class="field">
+              <label>نام فیلتر</label>
+              <input name="name" required placeholder="مثلاً Double BO" />
+            </div>
+            <div class="field">
+              <label>رنگ نشان</label>
+              <input name="color" type="color" value="#546E7A" />
+            </div>
+            <div class="field field--full">
+              <label>برچسب نمایشی</label>
+              <input name="label" placeholder="اختیاری — پیش‌فرض همان نام" />
+            </div>
+            <div class="field field--full">
+              <label>توضیح</label>
+              <textarea name="description" required placeholder="شرایط اعمال این فیلتر معاملاتی"></textarea>
+            </div>
+          </div>
+          <div class="modal__footer strategy-manager__actions">
+            <button class="btn btn-danger" type="button" id="btn-delete-trade-filter">حذف فیلتر</button>
+            <button class="btn btn-primary" type="submit">ذخیره فیلتر</button>
           </div>
         </form>
       </div>
@@ -321,7 +421,7 @@
           <div class="field field--full">
             <label>مسیر پایه پیش‌فرض (اختیاری)</label>
             <label>مسیر پایه پوشه ویدیو / اسکرین</label>
-            <input name="mediaBasePath" type="text" placeholder="مثلاً E:\...\SSNT Live Trades — پوشه‌های تاریخ‌دار داخلش" dir="ltr" style="text-align:left" />
+            <input name="mediaBasePath" type="text" placeholder="E:\Desktop\LevelsReaction\SobhanSamadi System\SSNT Live Trades" dir="ltr" style="text-align:left" />
             <span class="u-text-xs muted">کلیک روی روز تقویم، پوشه همان تاریخ را باز می‌کند (مثلاً 2026-7-21).</span>
           </div>
           <div class="field">

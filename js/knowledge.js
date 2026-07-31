@@ -154,10 +154,13 @@ function renderBlock(b, query) {
           ${items
             .map(
               (it) => `
-            <article class="kb-note-row ${it.favorite ? "is-fav" : ""}">
-              <p>${highlight(it.text, query)}</p>
-              <div class="kb-note-row__meta">
-                ${(it.tags || []).map((t) => `<button type="button" class="kb-tag" data-tag="${escapeHtml(t)}">#${escapeHtml(t)}</button>`).join("")}
+            <article class="kb-note-row ${it.favorite ? "is-fav" : ""}" data-note-id="${escapeHtml(it.id)}">
+              <div class="kb-note-row__top">
+                <p>${highlight(it.text, query)}</p>
+                <div class="kb-note-row__actions">
+                  <button type="button" class="btn-icon" data-edit-note="${escapeHtml(it.id)}" title="ویرایش" aria-label="ویرایش">${icon("edit", 15)}</button>
+                  <button type="button" class="btn-icon kb-note-row__del" data-delete-note="${escapeHtml(it.id)}" title="حذف" aria-label="حذف">${icon("trash", 15)}</button>
+                </div>
               </div>
             </article>`,
             )
@@ -541,6 +544,91 @@ function bindKnowledgeDom(root, notes, options = {}) {
       }
     });
   });
+
+  mainScope.querySelectorAll("[data-edit-note]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-edit-note");
+      const row = btn.closest(".kb-note-row");
+      if (!id || !row || row.classList.contains("is-editing")) return;
+      beginNoteEdit(row, id);
+    });
+  });
+
+  mainScope.querySelectorAll("[data-delete-note]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-delete-note");
+      if (!id || !window.confirm("این یادداشت حذف شود؟")) return;
+      try {
+        await mutateNotesListItem(id, (items, idx) => {
+          items.splice(idx, 1);
+        });
+        showToast("یادداشت حذف شد");
+        renderKnowledge(getState());
+      } catch (err) {
+        showToast(err.message || "خطا در حذف یادداشت");
+      }
+    });
+  });
+}
+
+function findNotesListItem(notes, pageId, itemId) {
+  const page = notes?.pages?.[pageId];
+  if (!page) return null;
+  for (const block of page.blocks || []) {
+    if (block.type !== "notes-list") continue;
+    const items = block.items || [];
+    const idx = items.findIndex((it) => it.id === itemId);
+    if (idx >= 0) return { block, items, idx, item: items[idx] };
+  }
+  return null;
+}
+
+async function mutateNotesListItem(itemId, mutator) {
+  const next = structuredClone(getState().notes);
+  const found = findNotesListItem(next, ui.pageId, itemId);
+  if (!found) throw new Error("یادداشت پیدا نشد");
+  mutator(found.items, found.idx, found.item);
+  await saveNotes(next);
+  return next;
+}
+
+function beginNoteEdit(row, id) {
+  const found = findNotesListItem(getState().notes, ui.pageId, id);
+  if (!found) return;
+  row.classList.add("is-editing");
+  const top = row.querySelector(".kb-note-row__top");
+  if (!top) return;
+  top.innerHTML = `
+    <textarea class="kb-note-row__edit" rows="3">${escapeHtml(found.item.text || "")}</textarea>
+    <div class="kb-note-row__edit-actions">
+      <button type="button" class="btn btn-primary" data-save-note="${escapeHtml(id)}">ذخیره</button>
+      <button type="button" class="btn btn-ghost" data-cancel-note>انصراف</button>
+    </div>
+  `;
+  const textarea = top.querySelector(".kb-note-row__edit");
+  textarea?.focus();
+  textarea?.setSelectionRange(textarea.value.length, textarea.value.length);
+
+  top.querySelector("[data-cancel-note]")?.addEventListener("click", () => {
+    renderKnowledge(getState());
+  });
+
+  top.querySelector("[data-save-note]")?.addEventListener("click", async () => {
+    const text = textarea?.value.trim() || "";
+    if (!text) {
+      showToast("متن یادداشت خالی نباشد");
+      return;
+    }
+    try {
+      await mutateNotesListItem(id, (_items, _idx, item) => {
+        item.text = text;
+      });
+      showToast("یادداشت ذخیره شد");
+      renderKnowledge(getState());
+    } catch (err) {
+      showToast(err.message || "خطا در ذخیره یادداشت");
+    }
+  });
 }
 
 async function openPage(pageId) {
@@ -639,7 +727,7 @@ export async function addQuickNote(text) {
   list.items.unshift({
     id: uid("qc"),
     text,
-    tags: ["quick"],
+    tags: [],
     favorite: false,
     createdAt: new Date().toISOString(),
   });

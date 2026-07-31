@@ -56,6 +56,22 @@
   border: 1px solid color-mix(in srgb, var(--gold) 26%, transparent);
 }
 
+.btn-orange {
+  background: color-mix(in srgb, var(--orange) 16%, transparent);
+  color: var(--orange-bright);
+  border: 1px solid color-mix(in srgb, var(--orange) 40%, transparent);
+}
+
+.btn-orange:hover {
+  background: color-mix(in srgb, var(--orange) 24%, transparent);
+  border-color: color-mix(in srgb, var(--orange) 55%, transparent);
+}
+
+.btn-edit-wide {
+  min-width: 10.5rem;
+  padding-inline: 48px;
+}
+
 .btn-danger {
   background: color-mix(in srgb, var(--loss) 14%, transparent);
   color: var(--loss);
@@ -253,6 +269,106 @@
   line-height: 1.6;
 }
 
+/* ---------- Strategy select (always opens downward) ---------- */
+.strategy-select {
+  position: relative;
+  width: 100%;
+}
+
+.strategy-select__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.strategy-select__trigger:hover {
+  border-color: var(--border-strong);
+}
+
+.strategy-select.is-open .strategy-select__trigger,
+.strategy-select__trigger:focus-visible {
+  border-color: var(--primary);
+  outline: none;
+  background: var(--surface);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.strategy-select__value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.strategy-select__chevron {
+  flex-shrink: 0;
+  color: var(--text-faint);
+  font-size: 0.75rem;
+}
+
+.strategy-select__menu {
+  z-index: 80;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-elevated);
+  box-shadow: var(--shadow-2);
+  overflow: auto;
+}
+
+.strategy-select__group {
+  margin-top: 4px;
+}
+
+.strategy-select__group:first-child {
+  margin-top: 0;
+}
+
+.strategy-select__group-label {
+  padding: 6px 10px;
+  margin-bottom: 2px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.strategy-select__option {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--text);
+  text-align: start;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.strategy-select__option:hover {
+  background: color-mix(in srgb, var(--primary) 8%, #ffffff);
+}
+
+.strategy-select__option.is-selected {
+  outline: 1px solid color-mix(in srgb, var(--primary) 45%, var(--border));
+  color: var(--primary);
+}
+
 /* ---------- Progress ---------- */
 .progress {
   height: 8px;
@@ -265,14 +381,12 @@
 .progress__bar {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--primary-dim), var(--primary));
+  background: var(--primary);
   transition: width var(--dur-slow) var(--ease);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 40%, transparent);
 }
 
 .progress__bar.is-over {
-  background: linear-gradient(90deg, var(--primary), var(--success));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--success) 40%, transparent);
+  background: var(--success);
 }
 
 /* ---------- Kbd / Search ---------- */
@@ -343,9 +457,7 @@
   width: min(640px, 100%);
   max-height: 80vh;
   overflow: auto;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--card-elevated) 60%, transparent), transparent 30%),
-    var(--card);
+  background: var(--card);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-3);
@@ -473,7 +585,7 @@
 
 .divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+  background: var(--border-strong);
   margin: var(--space-4) 0;
   border: none;
 }

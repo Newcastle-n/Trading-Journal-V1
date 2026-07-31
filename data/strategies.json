@@ -76,6 +76,17 @@
       "color": "#1976D2",
       "description": "وقتی قیمت قبل باز شدن مارکت سطحی را می‌شکند و بعد به آن پولبک می‌زند.",
       "tested": true
+    },
+    {
+      "id": "strategy-ms8rx7jh-h9dsp",
+      "name": "تحلیلی",
+      "color": "#029783",
+      "description": "ترکیب چند استراتژی",
+      "conditions": "",
+      "rules": "",
+      "commonMistakes": "",
+      "examples": "",
+      "tested": false
     }
   ],
   "secondary": [

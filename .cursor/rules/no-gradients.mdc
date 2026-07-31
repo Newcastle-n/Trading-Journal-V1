@@ -1,0 +1,28 @@
+---
+description: Design system — no gradients; solid colors only
+alwaysApply: true
+---
+
+# No Gradients
+
+Never use CSS gradients anywhere in this app (`linear-gradient`, `radial-gradient`, `conic-gradient`, or gradient tokens).
+
+## Rules
+
+- Backgrounds, fills, progress bars, dividers, badges, cards, and overlays must be **solid colors** (or a single `color-mix` / token).
+- Do not add atmospheric page glows, haze layers, or multi-stop background images for decoration.
+- Prefer tokens from `css/tokens.css` (`--bg`, `--surface`, `--card`, `--primary`, etc.).
+- Depth comes from solid surface tones, borders, and shadows — not gradients.
+
+## Examples
+
+```css
+/* ❌ BAD */
+background: linear-gradient(90deg, var(--primary), var(--gold));
+background-image: radial-gradient(...), var(--bg);
+
+/* ✅ GOOD */
+background: var(--primary);
+background: var(--bg);
+background: color-mix(in srgb, var(--gold) 12%, var(--card));
+```

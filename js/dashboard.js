@@ -1,10 +1,13 @@
 import {
+  DEFAULT_TRADE_FILTERS,
   calcStreak,
   calcStrategyStats,
+  calcTradeFilterStats,
   calcWindowStats,
   enrichEntries,
   escapeHtml,
   formatPct,
+  resolveTradeFilters,
   sameMonth,
   sameWeek,
   todayISO,
@@ -35,6 +38,24 @@ function strategyWinrateRows(strategies, entries) {
   `).join("");
 }
 
+function filterWinrateRows(entries, filters) {
+  const stats = calcTradeFilterStats(entries, filters).filter((item) => item.total > 0);
+  if (!stats.length) {
+    return `<p class="muted u-text-sm">بعد از انتخاب فیلتر روی معاملات، نرخ برد اینجا دیده می‌شود.</p>`;
+  }
+  return stats.map((item) => `
+    <div class="list-row">
+      <span class="u-flex u-items-center u-gap-2">
+        <span class="strategy-chip__swatch" style="background:${escapeHtml(item.color)}"></span>
+        <span class="u-text-sm">${escapeHtml(item.label || item.name)}</span>
+      </span>
+      <span class="num u-text-sm ${item.decided ? (item.winrate >= 0.5 ? "profit" : "loss") : "muted"}">
+        ${item.decided ? `${formatPct(item.winrate, 0)} · ${item.wins}W/${item.losses}L` : "—"}
+      </span>
+    </div>
+  `).join("");
+}
+
 export function renderDashboard(state) {
   const root = document.getElementById("view-dashboard");
   if (!root) return;
@@ -56,6 +77,9 @@ export function renderDashboard(state) {
     ...(state.strategies?.primary || []),
     ...(state.strategies?.secondary || []),
   ];
+  const tradeFilters = resolveTradeFilters(
+    state.tradeFilters?.length ? state.tradeFilters : DEFAULT_TRADE_FILTERS
+  );
 
   const recentNotes =
     state.notes?.version === 2
@@ -145,14 +169,21 @@ export function renderDashboard(state) {
       </section>
     </div>
 
-    <div class="grid-2">
+    <div class="grid-2 u-mb-5">
       <section class="card">
         <h3 class="card__title">نرخ برد سیستم‌ها</h3>
         ${strategyWinrateRows(strategies, entries)}
       </section>
       <section class="card">
-        <h3 class="card__title">اخیر</h3>
-        <div class="u-mb-4">
+        <h3 class="card__title">نرخ برد فیلترها</h3>
+        ${filterWinrateRows(entries, tradeFilters)}
+      </section>
+    </div>
+
+    <section class="card">
+      <h3 class="card__title">اخیر</h3>
+      <div class="grid-2">
+        <div>
           <div class="u-text-xs muted u-mb-2">ژورنال‌ها</div>
           ${enriched.slice(0, 3).map((e) => `
             <div class="list-row">
@@ -170,8 +201,8 @@ export function renderDashboard(state) {
             </button>
           `).join("") || `<p class="muted u-text-sm">صفحه‌ای سنجاق/علاقه نشده.</p>`}
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   `;
 
   root.querySelectorAll("[data-action]").forEach((btn) => {
@@ -185,18 +216,17 @@ export function renderDashboard(state) {
       } else if (action === "morning") {
         openModal("modal-morning");
       } else if (action === "open-plan") {
-        navigate("knowledge");
-        window.dispatchEvent(new CustomEvent("workspace:open-section", { detail: "plan-overview" }));
+        navigate("knowledge2");
+        window.dispatchEvent(new CustomEvent("workspace:open-booklet-chapter", { detail: "trading-plan" }));
       }
     });
   });
 
   root.querySelectorAll("[data-open-page]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      navigate("knowledge");
-      window.dispatchEvent(
-        new CustomEvent("workspace:open-section", { detail: btn.getAttribute("data-open-page") }),
-      );
+      navigate("knowledge2");
+      const pageId = btn.getAttribute("data-open-page");
+      window.dispatchEvent(new CustomEvent("workspace:open-section", { detail: pageId }));
     });
   });
 }

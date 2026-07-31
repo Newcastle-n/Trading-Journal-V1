@@ -1,66 +1,29 @@
-import { escapeHtml, formatPct, enrichEntries } from "./config.js";
+import { formatPct, enrichEntries, enrichBacktestEntries } from "./config.js";
 
-export function renderBacktests(state) {
-  const root = document.getElementById("view-backtests");
-  if (!root) return;
-
-  const trades = state.backtests?.trades || [];
-  const strategies = [...(state.strategies?.primary || []), ...(state.strategies?.secondary || [])];
-
-  root.innerHTML = `
-    <header class="page-header">
-      <div class="page-header__eyebrow">بک‌تست</div>
-      <h1>بک‌تست‌ها</h1>
-      <p class="page-header__desc">اسکلت آماده است. داده واقعی را بعداً از اکسل وارد می‌کنیم.</p>
-    </header>
-
-    <div class="filters">
-      <div class="field">
-        <label>استراتژی</label>
-        <select disabled>
-          <option>همه</option>
-          ${strategies.map((s) => `<option>${escapeHtml(s.name)}</option>`).join("")}
-        </select>
-      </div>
-      <div class="field">
-        <label>نتیجه</label>
-        <select disabled>
-          <option>همه</option>
-          <option>برد</option>
-          <option>باخت</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>بازار</label>
-        <select disabled>
-          <option>US30</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="journal-stats">
-      <div class="stat-tile">
-        <div class="stat-tile__label">نرخ برد</div>
-        <div class="stat-tile__value num">—</div>
-      </div>
-      <div class="stat-tile">
-        <div class="stat-tile__label">میانگین ریسک‌به‌ریوارد</div>
-        <div class="stat-tile__value num">—</div>
-      </div>
-      <div class="stat-tile">
-        <div class="stat-tile__label">تعداد معاملات</div>
-        <div class="stat-tile__value num">${trades.length}</div>
-      </div>
-      <div class="stat-tile">
-        <div class="stat-tile__label">انتظار ریاضی</div>
-        <div class="stat-tile__value num">—</div>
-      </div>
-    </div>
-
-    <div class="empty-state">
-      هنوز بک‌تستی وارد نشده. وقتی فایل اکسل را بدهی، فیلترها، آمار و چارت‌ها اینجا پر می‌شوند.
-    </div>
-  `;
+/** Map old wiki page ids → booklet chapter ids */
+export function wikiSectionToChapter(section) {
+  if (!section) return null;
+  const map = {
+    "quick-notes": "quick",
+    quick: "quick",
+    "plan-overview": "trading-plan",
+    "trading-plan": "trading-plan",
+    "legacy-mistakes": "mistakes",
+    mistakes: "mistakes",
+    "legacy-checklist": "checklist",
+    checklist: "checklist",
+    "check-presession": "checklist",
+    "check-during": "checklist",
+    "check-eod": "checklist",
+    "legacy-strategies": "strategies",
+    "strategies-index": "strategies",
+    strategies: "strategies",
+    lessons: "lessons",
+    "important-notes": "important-notes",
+  };
+  if (map[section]) return map[section];
+  if (String(section).startsWith("strat-")) return "strategies";
+  return null;
 }
 
 export function buildSearchIndex(state) {
@@ -77,48 +40,44 @@ export function buildSearchIndex(state) {
     });
   });
 
+  (state.backtests?.entries || []).forEach((e) => {
+    const en = enrichBacktestEntries([e])[0];
+    const wr = en.tradeStats?.decided ? formatPct(en.winrate, 0) : "—";
+    items.push({
+      type: "backtest",
+      id: e.id,
+      title: `بک‌تست ${e.date}`,
+      subtitle: `${e.strategy || ""} · ${wr}`,
+      action: { type: "view", view: "backtests" },
+    });
+  });
+
   [...(state.strategies?.primary || []), ...(state.strategies?.secondary || [])].forEach((s) => {
     items.push({
       type: "strategy",
       id: s.id,
       title: s.name,
       subtitle: s.description,
-      action: { type: "view", view: "knowledge", section: `strat-${String(s.id).replace(/\//g, "-")}` },
+      action: { type: "view", view: "knowledge2", chapter: "strategies" },
     });
   });
 
-  if (state.notes?.version === 2) {
-    Object.values(state.notes.pages || {}).forEach((page) => {
-      const body = (page.blocks || [])
-        .map((b) => b.text || b.title || "")
-        .join(" ")
-        .slice(0, 80);
-      items.push({
-        type: "note",
-        id: page.id,
-        title: page.title,
-        subtitle: body || (page.tags || []).join(" · "),
-        action: { type: "view", view: "knowledge", section: page.id },
-      });
+  (state.booklet?.chapters || []).forEach((ch) => {
+    items.push({
+      type: "note",
+      id: ch.id,
+      title: ch.title,
+      subtitle: ch.intro || "دانش",
+      action: { type: "view", view: "knowledge2", chapter: ch.id },
     });
-  } else {
-    (state.notes?.sections || []).forEach((section) => {
-      section.items.forEach((item) => {
-        items.push({
-          type: "note",
-          id: item.id,
-          title: item.text.slice(0, 60),
-          subtitle: section.title,
-          action: { type: "view", view: "knowledge", section: section.id },
-        });
-      });
-    });
-  }
+  });
 
   items.push(
     { type: "command", id: "c-new-j", title: "ثبت ژورنال جدید", subtitle: "ژورنال", action: { type: "new-journal" } },
+    { type: "command", id: "c-new-bt", title: "ثبت بک‌تست جدید", subtitle: "بک‌تست", action: { type: "new-backtest" } },
     { type: "command", id: "c-dash", title: "رفتن به خانه", subtitle: "ناوبری", action: { type: "view", view: "dashboard" } },
-    { type: "command", id: "c-plan", title: "پلن معاملاتی", subtitle: "دانش", action: { type: "view", view: "knowledge", section: "plan-overview" } },
+    { type: "command", id: "c-plan", title: "پلن معاملاتی", subtitle: "دانش", action: { type: "view", view: "knowledge2", chapter: "trading-plan" } },
+    { type: "command", id: "c-knowledge", title: "رفتن به دانش", subtitle: "ناوبری", action: { type: "view", view: "knowledge2" } },
     { type: "command", id: "c-morning", title: "چک لیست", subtitle: "روال", action: { type: "morning" } },
     { type: "command", id: "c-eod", title: "مرور پایان روز", subtitle: "روال", action: { type: "eod" } },
     { type: "command", id: "c-settings", title: "تنظیمات", subtitle: "فضای کاری", action: { type: "settings" } },

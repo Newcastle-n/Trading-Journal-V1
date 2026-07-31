@@ -1,6 +1,7 @@
 const cache = {
   journal: null,
   strategies: null,
+  tradeFilters: null,
   notes: null,
   booklet: null,
   plan: null,
@@ -29,23 +30,27 @@ async function postJson(path, body) {
 }
 
 export async function loadAll() {
-  const [journal, strategies, notes, booklet, plan, settings, backtests, mediaDates] = await Promise.all([
+  const [journal, strategies, tradeFilters, notes, booklet, plan, settings, backtests, mediaDates] = await Promise.all([
     getJson("/api/journal"),
     getJson("/api/strategies"),
+    getJson("/api/trade-filters").catch(() => []),
     getJson("/api/notes"),
     getJson("/api/booklet").catch(() => getJson("/data/notes-booklet.json")),
     getJson("/data/plan.json"),
     getJson("/api/settings"),
-    getJson("/data/backtests.json"),
+    getJson("/api/backtests"),
     getJson("/api/media-dates").catch(() => ({ dates: [], folders: {}, ok: false })),
   ]);
   cache.journal = journal;
   cache.strategies = strategies;
+  cache.tradeFilters = Array.isArray(tradeFilters) ? tradeFilters : [];
   cache.notes = notes;
   cache.booklet = booklet;
   cache.plan = plan;
   cache.settings = settings;
-  cache.backtests = backtests;
+  cache.backtests = {
+    entries: Array.isArray(backtests?.entries) ? backtests.entries : [],
+  };
   cache.mediaDates = mediaDates;
   return cache;
 }
@@ -84,14 +89,49 @@ export async function saveStrategies(strategies) {
   return saved;
 }
 
+export async function saveTradeFilters(tradeFilters) {
+  const saved = await postJson("/api/trade-filters", tradeFilters);
+  cache.tradeFilters = Array.isArray(saved) ? saved : tradeFilters;
+  return cache.tradeFilters;
+}
+
+export async function saveBacktests(backtests) {
+  const saved = await postJson("/api/backtests", backtests);
+  cache.backtests = saved;
+  return saved;
+}
+
+export function upsertBacktestEntry(entry) {
+  const backtests = cache.backtests || { entries: [] };
+  if (!Array.isArray(backtests.entries)) backtests.entries = [];
+  const idx = backtests.entries.findIndex((e) => e.id === entry.id || e.date === entry.date);
+  if (idx >= 0) backtests.entries[idx] = { ...backtests.entries[idx], ...entry };
+  else backtests.entries.push(entry);
+  backtests.entries.sort((a, b) => b.date.localeCompare(a.date));
+  return backtests;
+}
+
+export function deleteBacktestEntry(id) {
+  const backtests = cache.backtests || { entries: [] };
+  backtests.entries = (backtests.entries || []).filter((e) => e.id !== id);
+  return backtests;
+}
+
 export async function refreshMediaDates() {
   const mediaDates = await getJson("/api/media-dates");
   cache.mediaDates = mediaDates;
   return mediaDates;
 }
 
+function sanitizeMediaPath(value = "") {
+  return String(value || "")
+    .trim()
+    .replace(/^["']+|["']+$/g, "")
+    .trim();
+}
+
 export async function openMediaFolder({ mediaPath, path, date, createIfMissing = false } = {}) {
-  const folder = (mediaPath || path || "").trim();
+  const folder = sanitizeMediaPath(mediaPath || path || "");
   const res = await fetch("/api/open-media", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -113,6 +153,24 @@ export async function setMediaSeen(date, seen = true) {
   if (seen) mediaSeen[date] = true;
   else delete mediaSeen[date];
   settings.mediaSeen = mediaSeen;
+  return saveSettings(settings);
+}
+
+export async function setCalendarStarred(date, starred = true) {
+  const settings = { ...(cache.settings || {}) };
+  const calendarStarred = { ...(settings.calendarStarred || {}) };
+  if (starred) calendarStarred[date] = true;
+  else delete calendarStarred[date];
+  settings.calendarStarred = calendarStarred;
+  return saveSettings(settings);
+}
+
+export async function setCalendarBankHoliday(date, holiday = true) {
+  const settings = { ...(cache.settings || {}) };
+  const calendarBankHolidays = { ...(settings.calendarBankHolidays || {}) };
+  if (holiday) calendarBankHolidays[date] = true;
+  else delete calendarBankHolidays[date];
+  settings.calendarBankHolidays = calendarBankHolidays;
   return saveSettings(settings);
 }
 

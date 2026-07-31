@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "activePageId": "wiki-home",
+  "activePageId": "quick-notes",
   "expandedCats": [
-    "cat-home"
+    "cat-quick"
   ],
   "tree": [
     {
@@ -4346,7 +4346,7 @@
         "ops-presession"
       ],
       "favorite": false,
-      "pinned": true,
+      "pinned": false,
       "learned": false,
       "needsReview": false,
       "blocks": [
@@ -4364,13 +4364,11 @@
           "type": "notes-list",
           "items": [
             {
-              "id": "qc-mrufx146-0ny8s",
-              "text": "2leg",
-              "tags": [
-                "quick"
-              ],
+              "id": "qc-ms7xinn0-outy1",
+              "text": "سبحان روی 50درصد TR( شکست و عدم شکستش ) خیلی معامله میکنه، حواست باید به این سطح ارزشمند، باشه \n\n2026-7-7",
+              "tags": [],
               "favorite": false,
-              "createdAt": ""
+              "createdAt": "2026-07-30T19:51:16.524Z"
             }
           ]
         }

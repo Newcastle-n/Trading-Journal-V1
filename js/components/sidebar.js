@@ -15,8 +15,7 @@ import { icon } from "./icons.js";
 const NAV_ICONS = {
   dashboard: "dashboard",
   journal: "journal",
-  knowledge: "knowledge",
-  knowledge2: "book",
+  knowledge2: "knowledge",
   backtests: "backtests",
 };
 

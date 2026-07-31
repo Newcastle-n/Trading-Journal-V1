@@ -1,3 +1,362 @@
 {
-  "trades": []
+  "entries": [
+    {
+      "id": "bt-ms8vn3o9-r7odg",
+      "date": "2026-07-15",
+      "trades": [
+        {
+          "id": "trade-ms8vkybj-kn1dt",
+          "strategy": "تحلیلی",
+          "filters": [
+            {
+              "filter": "3s",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "3s",
+          "outcome": "riskFree",
+          "rr": 2,
+          "notes": "فیلتر 3 ثانیه به تنهایی کافی نیست\nشکست 50درصد TR هست استراتژیش و شکست کف کانال( دیدگاه کوچیکتر )"
+        },
+        {
+          "id": "trade-ms8vp4su-rac2h",
+          "strategy": "TR-BO+",
+          "filters": [
+            {
+              "filter": "Double BO",
+              "outcome": "profit"
+            },
+            {
+              "filter": "3s",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "Double BO",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": ""
+        }
+      ],
+      "strategy": "تحلیلی",
+      "tradeFilter": "3s",
+      "rr": 2,
+      "notes": "",
+      "mediaPath": "\"E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-7-15\""
+    },
+    {
+      "id": "bt-ms8t4uj7-539l5",
+      "date": "2026-07-14",
+      "trades": [
+        {
+          "id": "trade-ms8sypm8-liudz",
+          "strategy": "تحلیلی",
+          "filters": [
+            {
+              "filter": "Double FBO",
+              "outcome": "profit"
+            },
+            {
+              "filter": "None",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "Double FBO",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": ""
+        }
+      ],
+      "strategy": "تحلیلی",
+      "tradeFilter": "Double FBO",
+      "rr": 2,
+      "notes": "تو عمل، 2 تا ضرر الکی خوردم و پوزیشن سوم بهم سود داده\nبدلیل تغییر استاپ و زدن پوزیشن معکوس بدون رعایت فیلتر معاملاتی!",
+      "mediaPath": ""
+    },
+    {
+      "id": "bt-ms8slbyp-a2p6n",
+      "date": "2026-07-13",
+      "trades": [
+        {
+          "id": "trade-ms8sg5eh-h89lj",
+          "strategy": "تحلیلی",
+          "filters": [
+            {
+              "filter": "Double BO",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "Double BO",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": "ترکیبی از چند استراتژی\n1- CH-BO\n2- 50%TR رو شکسته، پس تمایل داره تا 100%شو پر کنه\n3- 123 امینو"
+        },
+        {
+          "id": "trade-ms8sj7ji-ewymi",
+          "strategy": "TR-BO+",
+          "filters": [
+            {
+              "filter": "3s",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "3s",
+          "outcome": "loss",
+          "rr": 2,
+          "notes": "با فیلتر های خودم، موقعیت نداده"
+        },
+        {
+          "id": "trade-ms8sj7tw-ardbw",
+          "strategy": "TR-FBO+",
+          "filters": [
+            {
+              "filter": "Double FBO",
+              "outcome": "loss"
+            },
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "loss"
+            },
+            {
+              "filter": "None",
+              "outcome": "loss"
+            },
+            {
+              "filter": "Double 3s",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "Double FBO",
+          "outcome": "loss",
+          "rr": 2,
+          "notes": ""
+        }
+      ],
+      "strategy": "تحلیلی",
+      "tradeFilter": "Double BO",
+      "rr": 2,
+      "notes": "",
+      "mediaPath": ""
+    },
+    {
+      "id": "bt-ms8rcaic-qun7s",
+      "date": "2026-07-10",
+      "trades": [
+        {
+          "id": "trade-ms8r98yj-adlyr",
+          "strategy": "TR-FBO+",
+          "filters": [
+            {
+              "filter": "Double FBO",
+              "outcome": "loss"
+            },
+            {
+              "filter": "Double 3s",
+              "outcome": "profit"
+            },
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "Double FBO",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": ""
+        }
+      ],
+      "strategy": "TR-FBO+",
+      "tradeFilter": "Double FBO",
+      "rr": 2,
+      "notes": "",
+      "mediaPath": ""
+    },
+    {
+      "id": "bt-ms8m5dpv-6o9hn",
+      "date": "2026-07-09",
+      "trades": [
+        {
+          "id": "trade-ms8lxek3-ekf9x",
+          "strategy": "RV-BO",
+          "filters": [
+            {
+              "filter": "3s",
+              "outcome": "profit"
+            },
+            {
+              "filter": "Double BO",
+              "outcome": "noPositionMinus"
+            },
+            {
+              "filter": "50% Pullback BO",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "3s",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": "اسپرد داخل روبو خیلی زیاد بوده\nولی این موضوع نباید باعث بشه که ترید نکنم، میتونم صرفا سود کمتری بگیرم"
+        }
+      ],
+      "strategy": "RV-BO",
+      "tradeFilter": "3s",
+      "rr": 2,
+      "notes": "",
+      "mediaPath": ""
+    },
+    {
+      "id": "bt-ms8kkctg-k0lhx",
+      "date": "2026-07-08",
+      "trades": [
+        {
+          "id": "trade-ms8kbbeg-pitku",
+          "strategy": "RV-BO",
+          "filters": [
+            {
+              "filter": "Double BO",
+              "outcome": "loss"
+            },
+            {
+              "filter": "3s",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "Double BO",
+          "rr": 2,
+          "notes": "",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-ms8kbe0d-bcpsp",
+          "strategy": "RV-FBO",
+          "filters": [
+            {
+              "filter": "None",
+              "outcome": "profit"
+            },
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "None",
+          "rr": 2,
+          "notes": "",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "RV-BO",
+      "tradeFilter": "Double BO",
+      "rr": 2,
+      "notes": "",
+      "mediaPath": ""
+    },
+    {
+      "id": "bt-ms7x5rvx-9rx3z",
+      "date": "2026-07-07",
+      "trades": [
+        {
+          "id": "trade-ms7x1fn8-9zzka",
+          "strategy": "RV-FBO",
+          "tradeFilter": "",
+          "rr": 2,
+          "notes": "",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-ms7x4pwe-9v2pa",
+          "strategy": "RV-BO",
+          "tradeFilter": "",
+          "rr": 2,
+          "notes": "",
+          "outcome": "profit"
+        },
+        {
+          "id": "trade-ms7x4uzj-39in8",
+          "strategy": "BE-Line",
+          "tradeFilter": "",
+          "rr": 2,
+          "notes": "",
+          "outcome": "loss"
+        }
+      ],
+      "strategy": "RV-FBO",
+      "tradeFilter": "",
+      "rr": 2,
+      "notes": "وقتی بترسی یا بخای سر چند پوینت، سود بیشتری بگیری، موقعیت رو به راحتی از دست میدی\nفیلتر double BO وقتی تا 50درصد هم برگرده، و دوباره BO بشه، میتونی وارد بشی، حدضرر هم میشه پشت سطح\n\nسبحان روی 50درصد TR( شکست و عدم شکستش ) خیلی معامله میکنه، حواست باید به این سطح ارزشمند، باشه\n",
+      "mediaPath": ""
+    },
+    {
+      "id": "bt-ms7vw2bu-9udk0",
+      "date": "2026-07-06",
+      "trades": [
+        {
+          "id": "trade-ms7vv99e-mq2a4",
+          "strategy": "TR-BO(-)",
+          "tradeFilter": "Double BO",
+          "rr": 2,
+          "notes": "",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-ms7vvavx-gnrni",
+          "strategy": "TR-FBO+",
+          "tradeFilter": "Double BO",
+          "rr": 2,
+          "notes": "البته من تو لایو مارکت منتظر فیلتر DoubleBO نموندم که این خودش اشتباهه و عجله کردن حساب میشه ولی خب فیلتر 3 ثانیه ( Double3sec)  هم اتفاق افتاد",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "TR-BO(-)",
+      "tradeFilter": "Double BO",
+      "rr": 2,
+      "notes": "وقتی فاصله 2 سقف/کف داخل TR کم هست، سبحان ترید نمیکنه، ولی من با فیلتر Double BO میتونم وارد بشم ( البته نیاز به بک تست گیری بیشتری داره",
+      "mediaPath": ""
+    },
+    {
+      "id": "bt-ms7v189o-q5b4a",
+      "date": "2026-07-02",
+      "trades": [
+        {
+          "id": "trade-ms7uuc3p-c3ks5",
+          "strategy": "CH-BO",
+          "tradeFilter": "",
+          "rr": 2,
+          "notes": "",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "CH-BO",
+      "tradeFilter": "",
+      "rr": 2,
+      "notes": "2Leg به شدت مهمه، ناحیه ای که تا 2Leg میشه معامله کرد، Safezone نامیده میشه و با BO راحت میتونی تا انتهای 2Leg بگیری\n2Leg بیشتر داخل CH کاربرد داره",
+      "mediaPath": "\"E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-7-2\""
+    },
+    {
+      "id": "bt-ms7of0sn-vkgiq",
+      "date": "2026-07-01",
+      "trades": [
+        {
+          "id": "trade-ms7o5c3j-27143",
+          "strategy": "TR-BO(-)",
+          "tradeFilter": "",
+          "rr": 2,
+          "notes": "یه تیک پایین تری کندل قبلی میشه وارد BO شد",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-ms7omlh2-oft86",
+          "strategy": "TR-FBO+",
+          "tradeFilter": "",
+          "rr": 2,
+          "notes": "",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "TR-BO(-)",
+      "tradeFilter": "",
+      "rr": 2,
+      "notes": "وقتی تو TR بادی کندل خیلی بزرگ میشه و میرسه به سقف/کف نباید BO بگیری چون ریسکش خیلی بالاست\nباید منتظر بسته شدن کندل باشی\n(FBO باید بررسی بشه ولی احتمالا اوکیه و میتونی وارد بشی)",
+      "mediaPath": "\"E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-7-1\""
+    }
+  ]
 }

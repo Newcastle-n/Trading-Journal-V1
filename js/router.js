@@ -11,21 +11,26 @@ export function onRoute(fn) {
 }
 
 export function navigate(view, { replace = false } = {}) {
-  current = view;
-  const hash = `#/${view}`;
-  if (replace) history.replaceState({ view }, "", hash);
-  else history.pushState({ view }, "", hash);
-  listeners.forEach((fn) => fn(view));
+  const resolved = view === "knowledge" ? "knowledge2" : view;
+  current = resolved;
+  const hash = `#/${resolved}`;
+  if (replace) history.replaceState({ view: resolved }, "", hash);
+  else history.pushState({ view: resolved }, "", hash);
+  listeners.forEach((fn) => fn(resolved));
 }
 
 export function initRouter(defaultView = "dashboard") {
   const fromHash = location.hash.replace(/^#\/?/, "");
-  const start = fromHash || defaultView;
+  let start = fromHash || defaultView;
+  if (start === "knowledge") start = "knowledge2";
   current = start;
-  if (!location.hash) history.replaceState({ view: start }, "", `#/${start}`);
+  if (!location.hash || fromHash === "knowledge") {
+    history.replaceState({ view: start }, "", `#/${start}`);
+  }
 
   window.addEventListener("popstate", () => {
-    const view = location.hash.replace(/^#\/?/, "") || defaultView;
+    let view = location.hash.replace(/^#\/?/, "") || defaultView;
+    if (view === "knowledge") view = "knowledge2";
     current = view;
     listeners.forEach((fn) => fn(view));
   });

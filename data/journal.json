@@ -1,6 +1,285 @@
 {
   "entries": [
     {
+      "id": "j-ms9ckjtl-z1rkw",
+      "date": "2026-07-31",
+      "balanceStart": 444,
+      "balanceEnd": 449.5,
+      "trades": [
+        {
+          "id": "trade-ms9ch3cy-7qo22",
+          "strategy": "CH-FBO",
+          "filters": [
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "loss"
+            },
+            {
+              "filter": "Double FBO",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "50% Pullback FBO",
+          "entryQuality": 5,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-ms9cirxq-k70r4",
+          "strategy": "CH-BO",
+          "filters": [
+            {
+              "filter": "Double BO",
+              "outcome": "profit"
+            },
+            {
+              "filter": "50% Pullback BO",
+              "outcome": "noPositionMinus"
+            }
+          ],
+          "tradeFilter": "Double BO",
+          "entryQuality": 5,
+          "exitQuality": 4,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "CH-FBO",
+      "tradeFilter": "50% Pullback FBO",
+      "entryQuality": 5,
+      "exitQuality": 5,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 3,
+      "lesson": "",
+      "notes": "",
+      "mediaPath": "E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-7-31"
+    },
+    {
+      "id": "j-ms7mzdfs-u0tuj",
+      "date": "2026-07-30",
+      "balanceStart": 437,
+      "balanceEnd": 444,
+      "trades": [
+        {
+          "id": "trade-ms7mxrv5-2ud8y",
+          "strategy": "RV-BO",
+          "entryQuality": 5,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-ms7myuqy-ukk5k",
+          "strategy": "RV-FBO",
+          "entryQuality": 5,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "RV-BO",
+      "entryQuality": 5,
+      "exitQuality": 5,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 5,
+      "lesson": "",
+      "notes": "",
+      "mediaPath": "\"E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-7-30\""
+    },
+    {
+      "id": "j-ms7dmhon-dqqrw",
+      "date": "2026-07-29",
+      "balanceStart": 442.5,
+      "balanceEnd": 437,
+      "trades": [
+        {
+          "id": "trade-ms7dkli9-hj5e7",
+          "strategy": "CH-BO",
+          "entryQuality": 4,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "loss"
+        }
+      ],
+      "strategy": "CH-BO",
+      "entryQuality": 4,
+      "exitQuality": 5,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 3,
+      "lesson": "",
+      "notes": "",
+      "mediaPath": ""
+    },
+    {
+      "id": "j-ms5320ko-nf621",
+      "date": "2026-07-28",
+      "balanceStart": 446,
+      "balanceEnd": 442.5,
+      "trades": [
+        {
+          "id": "trade-ms52y698-q9mei",
+          "strategy": "CH-Line-FBO",
+          "entryQuality": 2,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "loss"
+        }
+      ],
+      "strategy": "CH-Line-FBO",
+      "entryQuality": 2,
+      "exitQuality": 5,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 2,
+      "lesson": "شب ها دیگه حق ندارم بیشتر 1 سیستمم روشن باشه\nبه هــــــــــــــــیچ وجــــــــــــــــه !",
+      "notes": "",
+      "mediaPath": ""
+    },
+    {
+      "id": "j-ms532t2g-czgil",
+      "date": "2026-07-27",
+      "balanceStart": 441,
+      "balanceEnd": 446,
+      "trades": [
+        {
+          "id": "trade-ms53234k-p2epu",
+          "strategy": "CH-Line-FBO",
+          "entryQuality": 5,
+          "exitQuality": 4,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "CH-Line-FBO",
+      "entryQuality": 5,
+      "exitQuality": 4,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 3,
+      "lesson": "",
+      "notes": "",
+      "mediaPath": ""
+    },
+    {
+      "id": "j-mrz33s6e-97k9y",
+      "date": "2026-07-24",
+      "balanceStart": 449,
+      "balanceEnd": 441,
+      "trades": [
+        {
+          "id": "trade-mrz2yplo-o3hhl",
+          "strategy": "BE-Line",
+          "entryQuality": 3,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-mrz2z2x9-uwbl7",
+          "strategy": "BE-Line-BO",
+          "entryQuality": 5,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "loss"
+        }
+      ],
+      "strategy": "BE-Line",
+      "entryQuality": 3,
+      "exitQuality": 5,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 3,
+      "lesson": "اگه 2 تاضرر کردی، الکی نترس و پنیک نکن\nخیلی ریلکس بشین، تو موقعیت سوم ، با ریت بالا، وارد شو\nهمه چی باید طبق پلن پیش بره، اگه 3 تاضرر طبق پلن کردی هم نوش جونت، مهم نیست اصلا",
+      "notes": "اگه موقعیت سوم رو ترید زده بود ( RV-FBO ) 2درصد سود کرده بودم و برآیند روزم میشد صفر\nولی بجاش رفتم گیم زدم ( واکنش احساسی نسبت به ضرر هام )",
+      "mediaPath": ""
+    },
+    {
+      "id": "j-mrxk66en-nr2bm",
+      "date": "2026-07-23",
+      "balanceStart": 449,
+      "balanceEnd": 449,
+      "trades": [
+        {
+          "id": "trade-mrxk4rj5-82cj3",
+          "strategy": "pullback",
+          "entryQuality": 3,
+          "exitQuality": 3,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "riskFree"
+        }
+      ],
+      "strategy": "pullback",
+      "entryQuality": 3,
+      "exitQuality": 3,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 5,
+      "lesson": "بعضی روزا ممکنه مارکت اونجوری که میخای نباشه، نتونی موقعیت ببینی، خیلی راحت، معامله انجام نمیدی",
+      "notes": "",
+      "mediaPath": ""
+    },
+    {
+      "id": "j-mrwce4xu-mo9yq",
+      "date": "2026-07-22",
+      "balanceStart": 450,
+      "balanceEnd": 449,
+      "trades": [
+        {
+          "id": "trade-mrwc8foe-4nu6s",
+          "strategy": "TR-BO+",
+          "entryQuality": 3,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "riskFree"
+        },
+        {
+          "id": "trade-mrwcczd4-03q6g",
+          "strategy": "TR-FBO(-)",
+          "entryQuality": 4,
+          "exitQuality": 4,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "riskFree"
+        }
+      ],
+      "strategy": "TR-BO+",
+      "entryQuality": 3,
+      "exitQuality": 5,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 4,
+      "lesson": "داخل TR هم میشه با سایر استراتژی ها مثل ( BE-FBO/50%TR) ترید کرد",
+      "notes": "درسته سود نکردم، ولی 2 بار RF کردم که هر 2 بار به نفعم شد",
+      "mediaPath": ""
+    },
+    {
       "id": "j-mrur4jl1-7etlg",
       "date": "2026-07-21",
       "balanceStart": 446,

@@ -20,6 +20,14 @@ DATA = ROOT / "data"
 PID_FILE = ROOT / ".server.pid"
 HOST = "127.0.0.1"
 PORT = 8765
+DEFAULT_MEDIA_BASE_PATH = (
+    r"E:\Desktop\LevelsReaction\SobhanSamadi System\SSNT Live Trades"
+)
+
+
+def sanitize_media_path(value: str) -> str:
+    text = str(value or "").strip()
+    return text.strip("\"'")
 
 API_FILES = {
     "/api/journal": DATA / "journal.json",
@@ -27,6 +35,8 @@ API_FILES = {
     "/api/booklet": DATA / "notes-booklet.json",
     "/api/settings": DATA / "settings.json",
     "/api/strategies": DATA / "strategies.json",
+    "/api/trade-filters": DATA / "trade-filters.json",
+    "/api/backtests": DATA / "backtests.json",
 }
 
 
@@ -150,7 +160,10 @@ class Handler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/media-dates":
             try:
                 settings = read_json(DATA / "settings.json")
-                base = Path(str(settings.get("mediaBasePath") or "").strip())
+                base = Path(
+                    sanitize_media_path(settings.get("mediaBasePath") or "")
+                    or DEFAULT_MEDIA_BASE_PATH
+                )
                 self._send_json(200, list_media_dates(base))
             except Exception as exc:  # noqa: BLE001
                 self._send_json(500, {"error": str(exc)})
@@ -174,13 +187,16 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 payload = self._read_body()
                 # Prefer user-specified folder from journal entry
-                explicit = str(
+                explicit = sanitize_media_path(
                     payload.get("mediaPath") or payload.get("path") or ""
-                ).strip()
+                )
                 date = str(payload.get("date") or "").strip()
                 create_missing = bool(payload.get("createIfMissing", False))
                 settings = read_json(DATA / "settings.json")
-                base = (settings.get("mediaBasePath") or "").strip()
+                base = (
+                    sanitize_media_path(settings.get("mediaBasePath") or "")
+                    or DEFAULT_MEDIA_BASE_PATH
+                )
 
                 if explicit:
                     folder = Path(explicit)

@@ -3,8 +3,6 @@ import {
   escapeHtml,
   filterOutcomeMeta,
   filtersOfTrade,
-  formatMoney,
-  formatPct,
   outcomeMeta,
   parseISODate,
   resolveTradeFilters,
@@ -12,12 +10,12 @@ import {
 } from "../config.js";
 import { getState } from "../storage.js";
 
+const dayNames = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"];
+
 function filterCatalog() {
   const state = getState();
   return resolveTradeFilters(state?.tradeFilters?.length ? state.tradeFilters : DEFAULT_TRADE_FILTERS);
 }
-
-const dayNames = ["یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"];
 
 function tradesOf(entry) {
   if (Array.isArray(entry.trades) && entry.trades.length) return entry.trades;
@@ -25,29 +23,16 @@ function tradesOf(entry) {
     strategy: entry.strategy || "",
     tradeFilter: entry.tradeFilter || "",
     filters: entry.filters,
-    entryQuality: entry.entryQuality,
-    exitQuality: entry.exitQuality,
     rr: entry.rr,
-    emotion: entry.emotion || "",
     notes: "",
     outcome: entry.outcome || "",
   }];
 }
 
 function filterRowsHtml(trade) {
-  const rows = filtersOfTrade(trade);
+  const rows = filtersOfTrade(trade).filter((row) => row.filter);
   if (!rows.length) {
-    const legacy = String(trade.tradeFilter || "").trim();
-    if (!legacy || legacy === "None") {
-      return `<span class="muted">بدون فیلتر</span>`;
-    }
-    const meta = tradeFilterMeta(legacy, filterCatalog());
-    return `
-      <span class="trade-filter-chip">
-        <span class="strategy-chip__swatch" style="background:${escapeHtml(meta?.color || "#546E7A")}"></span>
-        <b>${escapeHtml(meta?.label || legacy)}</b>
-      </span>
-    `;
+    return `<span class="muted">بدون فیلتر</span>`;
   }
   return rows.map((row) => {
     const meta = tradeFilterMeta(row.filter, filterCatalog());
@@ -64,37 +49,45 @@ function filterRowsHtml(trade) {
   }).join("");
 }
 
-export function journalCardHtml(entry, { strategyMap = {}, highlightStrategy = "" } = {}) {
+export function backtestCardHtml(entry, { strategyMap = {}, highlightStrategy = "" } = {}) {
   const date = parseISODate(entry.date);
-  const pnlClass = entry.pnl > 0 ? "profit" : entry.pnl < 0 ? "loss" : "";
   const trades = tradesOf(entry);
+  const stats = entry.tradeStats || {};
+  const resultClass = entry.dayResult === "profit" ? "profit" : entry.dayResult === "loss" ? "loss" : entry.dayResult === "flat" ? "flat" : "";
+  const winrateText = stats.decided
+    ? `${(stats.winrate * 100).toFixed(0)}% (${stats.wins}W/${stats.losses}L)`
+    : "—";
+  const badgeClass = entry.dayResult === "profit"
+    ? "badge--success"
+    : entry.dayResult === "loss"
+      ? "badge--loss"
+      : "badge--orange";
 
   return `
-    <article class="card journal-card" data-journal-id="${escapeHtml(entry.id)}">
+    <article class="card journal-card" data-backtest-id="${escapeHtml(entry.id)}">
       <div class="journal-card__top">
         <div>
           <h3 class="card__title u-mb-2">${escapeHtml(entry.date)} · ${dayNames[date.getDay()]}</h3>
           <div class="u-flex u-gap-2 u-items-center">
-            <span class="badge ${entry.pnl >= 0 ? "badge--success" : "badge--loss"}">${formatPct(entry.pct)}</span>
+            <span class="badge ${badgeClass}">${escapeHtml(winrateText)}</span>
             <span class="muted u-text-xs num">${trades.length} معامله</span>
           </div>
         </div>
         <div class="u-flex u-gap-2">
-          <button class="btn btn-ghost" data-edit-journal="${escapeHtml(entry.id)}">ویرایش</button>
-          <button class="btn btn-soft" data-open-media="${escapeHtml(entry.id)}">اسکرین / ویدیو</button>
-          <button class="btn btn-danger" data-delete-journal="${escapeHtml(entry.id)}">حذف</button>
+          <button class="btn btn-orange btn-edit-wide" data-edit-backtest="${escapeHtml(entry.id)}">ویرایش</button>
+          <button class="btn btn-danger" data-delete-backtest="${escapeHtml(entry.id)}">حذف</button>
         </div>
       </div>
       <div class="journal-card__grid">
-        <div class="metric"><span class="metric__label">بالانس شروع</span><span class="metric__value num">${formatMoney(entry.balanceStart)}</span></div>
-        <div class="metric"><span class="metric__label">بالانس نهایی</span><span class="metric__value num">${formatMoney(entry.balanceEnd)}</span></div>
-        <div class="metric"><span class="metric__label">سود / زیان</span><span class="metric__value num ${pnlClass}">${formatMoney(entry.pnl)}</span></div>
-        <div class="metric"><span class="metric__label">پیروی از قوانین</span><span class="metric__value num">${entry.ruleFollow || "—"} / 5</span></div>
+        <div class="metric"><span class="metric__label">نرخ برد روز</span><span class="metric__value num ${resultClass}">${escapeHtml(winrateText)}</span></div>
+        <div class="metric"><span class="metric__label">سود</span><span class="metric__value num">${stats.wins ?? 0}</span></div>
+        <div class="metric"><span class="metric__label">ضرر</span><span class="metric__value num">${stats.losses ?? 0}</span></div>
+        <div class="metric"><span class="metric__label">ریسک‌فری</span><span class="metric__value num">${stats.riskFree ?? 0}</span></div>
       </div>
       <div class="journal-trades">
         ${trades.map((trade, index) => {
           const strategy = strategyMap[trade.strategy] || {};
-          const outcome = outcomeMeta(trade.outcome);
+          const tradeOutcome = outcomeMeta(trade.outcome);
           const matchClass = highlightStrategy
             ? (trade.strategy === highlightStrategy ? " is-strategy-match" : " is-strategy-muted")
             : "";
@@ -103,23 +96,18 @@ export function journalCardHtml(entry, { strategyMap = {}, highlightStrategy = "
               <div class="journal-trade__title">
                 <span class="strategy-chip__swatch" style="background:${escapeHtml(strategy.color || "#34c5b1")}"></span>
                 <strong>معامله ${index + 1} · ${escapeHtml(trade.strategy || "بدون استراتژی")}</strong>
-                ${outcome ? `<span class="badge ${outcome.badge}">${outcome.label}</span>` : `<span class="badge badge--warn">بدون نتیجه</span>`}
+                ${tradeOutcome
+                  ? `<span class="badge ${tradeOutcome.badge}">${tradeOutcome.label}</span>`
+                  : `<span class="badge badge--warn">بدون نتیجه</span>`}
               </div>
               <div class="journal-trade__filters">
                 ${filterRowsHtml(trade)}
               </div>
-              <div class="journal-trade__metrics">
-                <span>ورود <b class="num">${trade.entryQuality || "—"}/5</b></span>
-                <span>خروج <b class="num">${trade.exitQuality || "—"}/5</b></span>
-                <span>R:R <b class="num">${(2).toFixed(1)}</b></span>
-              </div>
-              ${trade.emotion ? `<p>${escapeHtml(trade.emotion)}</p>` : ""}
               ${trade.notes ? `<p>${escapeHtml(trade.notes)}</p>` : ""}
             </div>
           `;
         }).join("")}
       </div>
-      ${entry.lesson ? `<p class="journal-card__notes"><strong class="muted">درس امروز:</strong> ${escapeHtml(entry.lesson)}</p>` : ""}
       ${entry.notes ? `<p class="journal-card__notes"><strong class="muted">یادداشت:</strong> ${escapeHtml(entry.notes)}</p>` : ""}
     </article>
   `;

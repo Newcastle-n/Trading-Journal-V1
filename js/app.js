@@ -1,4 +1,4 @@
-import { config } from "./config.js";
+import { config, DEFAULT_MEDIA_BASE_PATH } from "./config.js";
 import { initRouter, onRoute, navigate } from "./router.js";
 import { loadAll, getState, saveSettings } from "./storage.js";
 import { bindSidebar, renderSidebar, renderSessionPill, syncNavActive } from "./components/sidebar.js";
@@ -6,10 +6,11 @@ import { bindModalDismiss, openModal, closeModal } from "./components/modal.js";
 import { showToast } from "./components/toast.js";
 import { renderDashboard } from "./dashboard.js";
 import { renderJournal, bindJournalForm } from "./journal.js";
-import { renderKnowledge, bindKnowledgeEvents, addQuickNote } from "./knowledge.js";
+import { addQuickNote } from "./knowledge.js";
 import { renderKnowledge2, bindKnowledge2Events } from "./knowledge2.js";
-import { renderBacktests } from "./search.js";
+import { renderBacktests, bindBacktestForm } from "./backtests.js";
 import { bindCommandPalette } from "./commandPalette.js";
+import { bindStrategySelects } from "./components/strategySelect.js";
 
 async function refresh() {
   const state = getState();
@@ -17,7 +18,6 @@ async function refresh() {
   renderSessionPill();
   renderDashboard(state);
   renderJournal(state);
-  renderKnowledge(state);
   renderKnowledge2(state);
   renderBacktests(state);
   syncNavActive(location.hash.replace(/^#\/?/, "") || "dashboard");
@@ -25,11 +25,12 @@ async function refresh() {
 }
 
 function showActiveView(view) {
+  const resolved = view === "knowledge" ? "knowledge2" : view;
   document.querySelectorAll(".view").forEach((el) => {
-    el.classList.toggle("is-active", el.id === `view-${view}`);
+    el.classList.toggle("is-active", el.id === `view-${resolved}`);
   });
-  document.querySelector(".view-root")?.setAttribute("data-view", view);
-  syncNavActive(view);
+  document.querySelector(".view-root")?.setAttribute("data-view", resolved);
+  syncNavActive(resolved);
 }
 
 function applyTheme(theme) {
@@ -108,7 +109,7 @@ function bindSettings() {
     const form = document.getElementById("settings-form");
     if (!form) return;
     form.elements.userName.value = s.userName || "سپهر";
-    form.elements.mediaBasePath.value = s.mediaBasePath || "";
+    form.elements.mediaBasePath.value = s.mediaBasePath || DEFAULT_MEDIA_BASE_PATH;
     form.elements.dailyPct.value = ((s.goals?.dailyPct ?? 0.02) * 100).toFixed(1);
     form.elements.weeklyPct.value = ((s.goals?.weeklyPct ?? 0.04) * 100).toFixed(1);
     form.elements.monthlyPct.value = ((s.goals?.monthlyPct ?? 0.17) * 100).toFixed(1);
@@ -131,8 +132,8 @@ function bindCapture() {
       closeModal("modal-capture");
       showToast("نکته در Inbox دانش ذخیره شد");
       await refresh();
-      navigate("knowledge");
-      window.dispatchEvent(new CustomEvent("workspace:open-section", { detail: "quick-notes" }));
+      navigate("knowledge2");
+      window.dispatchEvent(new CustomEvent("workspace:open-booklet-chapter", { detail: "quick" }));
     } catch (err) {
       showToast(err.message);
     }
@@ -197,10 +198,14 @@ async function boot() {
   bindSettings();
   bindCapture();
   bindChecklists();
-  bindKnowledgeEvents();
   bindKnowledge2Events();
   bindCommandPalette();
+  bindStrategySelects();
   bindJournalForm(async () => {
+    await loadAll();
+    await refresh();
+  });
+  bindBacktestForm(async () => {
     await loadAll();
     await refresh();
   });

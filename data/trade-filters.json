@@ -1,0 +1,51 @@
+[
+  {
+    "id": "filter-none",
+    "value": "None",
+    "label": "بدون فیلتر",
+    "color": "#607D8B",
+    "description": "معامله بدون اعمال فیلتر معاملاتی."
+  },
+  {
+    "id": "filter-double-bo",
+    "value": "Double BO",
+    "label": "Double BO",
+    "color": "#2E7D32",
+    "description": "وقتی قیمت سطحی را می‌شکند، اندکی اصلاح می‌کند و دوباره HL کندل خودش را می‌شکند."
+  },
+  {
+    "id": "filter-double-fbo",
+    "value": "Double FBO",
+    "label": "Double FBO",
+    "color": "#BF360C",
+    "description": "دقیقاً همان Double BO است، ولی روی FBOها."
+  },
+  {
+    "id": "filter-3s",
+    "value": "3s",
+    "label": "3s",
+    "color": "#1565C0",
+    "description": "وقتی قیمت خودش را ۳ ثانیه بالا/پایین سطح نگه می‌دارد."
+  },
+  {
+    "id": "filter-double-3s",
+    "value": "Double 3s",
+    "label": "Double 3s",
+    "color": "#6A1B9A",
+    "description": "همان 3s با این تفاوت که قیمت یک اصلاح می‌کند و سپس ۳ ثانیه خودش را نگه می‌دارد (در حال برگشت نباشد)."
+  },
+  {
+    "id": "filter-50-pullback-bo",
+    "value": "50% Pullback BO",
+    "label": "50% Pullback BO",
+    "color": "#C9A227",
+    "description": "وقتی قیمت سطحی را می‌شکند، 3s را رعایت می‌کند و به ۵۰٪ شکست خودش برمی‌گردد."
+  },
+  {
+    "id": "filter-50-pullback-fbo",
+    "value": "50% Pullback FBO",
+    "label": "50% Pullback FBO",
+    "color": "#EF6C00",
+    "description": "وقتی FBO می‌شود، 3s را رعایت می‌کند و به ۵۰٪ شکست خودش برمی‌گردد."
+  }
+]

@@ -2,8 +2,6 @@
 [data-theme="dark"] {
   /* Surfaces — refined, layered by tone not borders */
   --bg: #050a09;
-  --bg-glow-a: rgba(47, 186, 169, 0.13);
-  --bg-glow-b: rgba(212, 169, 78, 0.12);
   --surface: #0b1512;
   --card: #12201b;
   --card-elevated: #182a23;
@@ -37,19 +35,27 @@
   --orange-ghost: rgba(240, 136, 62, 0.18);
   --overlay: rgba(6, 13, 11, 0.72);
 
+  /* Calendar day cards */
+  --cal-empty: #15201c;
+  --cal-profit-bg: #16352f;
+  --cal-profit-border: #2f6f62;
+  --cal-profit-fg: #6ee0c8;
+  --cal-loss-bg: #3a1f2a;
+  --cal-loss-border: #8a4560;
+  --cal-loss-fg: #f0a0b8;
+  --cal-flat-bg: #221c16;
+  --cal-flat-border: #5a4330;
+  --cal-flat-fg: #c9a67a;
+
   /* Shadows — layered, soft, premium */
   --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.18);
   --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.22), 0 12px 28px rgba(0, 0, 0, 0.28);
   --shadow-3: 0 8px 20px rgba(0, 0, 0, 0.28), 0 24px 48px rgba(0, 0, 0, 0.34);
-  --shadow-glow: 0 0 0 1px color-mix(in srgb, var(--primary) 25%, transparent), 0 8px 24px color-mix(in srgb, var(--primary) 18%, transparent);
   --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  --hairline-glow: linear-gradient(90deg, transparent, var(--primary), transparent);
 }
 
 [data-theme="light"] {
   --bg: #f7f4ed;
-  --bg-glow-a: rgba(30, 143, 130, 0.1);
-  --bg-glow-b: rgba(176, 133, 34, 0.14);
   --surface: #fffdfa;
   --card: #ffffff;
   --card-elevated: #fffaf0;
@@ -79,12 +85,22 @@
   --orange-ghost: rgba(230, 126, 34, 0.14);
   --overlay: rgba(20, 34, 30, 0.4);
 
+  /* Calendar day cards */
+  --cal-empty: #eff1f0;
+  --cal-profit-bg: #d7f0e9;
+  --cal-profit-border: #7ebfb0;
+  --cal-profit-fg: #0d6b5c;
+  --cal-loss-bg: #f5dde6;
+  --cal-loss-border: #d49aad;
+  --cal-loss-fg: #9a3558;
+  --cal-flat-bg: #faf3eb;
+  --cal-flat-border: #e8d2bc;
+  --cal-flat-fg: #9a7048;
+
   --shadow-1: 0 1px 2px rgba(20, 34, 30, 0.06), 0 2px 6px rgba(20, 34, 30, 0.04);
   --shadow-2: 0 4px 12px rgba(20, 34, 30, 0.06), 0 12px 28px rgba(20, 34, 30, 0.08);
   --shadow-3: 0 8px 20px rgba(20, 34, 30, 0.08), 0 24px 48px rgba(20, 34, 30, 0.1);
-  --shadow-glow: 0 0 0 1px color-mix(in srgb, var(--primary) 22%, transparent), 0 8px 24px color-mix(in srgb, var(--primary) 14%, transparent);
   --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --hairline-glow: linear-gradient(90deg, transparent, var(--primary), transparent);
 }
 
 :root {

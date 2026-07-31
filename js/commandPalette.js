@@ -92,12 +92,17 @@ function runAction(item, handlers) {
   const a = item.action || {};
   if (a.type === "view") {
     navigate(a.view);
-    if (a.section) {
+    if (a.chapter) {
+      window.dispatchEvent(new CustomEvent("workspace:open-booklet-chapter", { detail: a.chapter }));
+    } else if (a.section) {
       window.dispatchEvent(new CustomEvent("workspace:open-section", { detail: a.section }));
     }
   } else if (a.type === "new-journal") {
     navigate("journal");
     window.dispatchEvent(new CustomEvent("workspace:new-journal"));
+  } else if (a.type === "new-backtest") {
+    navigate("backtests");
+    window.dispatchEvent(new CustomEvent("workspace:new-backtest"));
   } else if (a.type === "morning") {
     openModal("modal-morning");
   } else if (a.type === "eod") {
