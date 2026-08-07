@@ -225,6 +225,10 @@
               <input type="range" name="ruleFollow" min="1" max="5" value="3" />
             </div>
             <div class="field field--full">
+              <label>دیدگاه معاملاتی قبل از شروع ترید</label>
+              <textarea name="tradingBias" rows="3" placeholder="بایاس و دیدگاه قبل از شروع ترید…"></textarea>
+            </div>
+            <div class="field field--full">
               <label>درس امروز</label>
               <textarea name="lesson"></textarea>
             </div>
@@ -360,12 +364,25 @@
   <div class="modal-backdrop" id="modal-morning" aria-hidden="true" data-static-backdrop>
     <div class="modal" role="dialog">
       <div class="modal__header">
-        <h3 class="u-mb-0">چک لیست</h3>
+        <h3 class="u-mb-0" id="morning-title">چک لیست</h3>
         <button class="btn btn-ghost" type="button" data-close-modal="modal-morning">بستن</button>
       </div>
-      <div class="modal__body" id="morning-list"></div>
-      <div class="modal__footer">
+      <div class="modal__body">
+        <div id="morning-list"></div>
+        <div class="morning-bias" id="morning-bias-wrap">
+          <div class="field">
+            <label for="morning-trading-bias">دیدگاه معاملاتی قبل از شروع ترید</label>
+            <textarea id="morning-trading-bias" rows="4" placeholder="بایاس امروز، ساختار بازار، سناریوهای احتمالی…"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer" id="morning-footer-view">
+        <button class="btn btn-soft" type="button" id="morning-edit">ویرایش</button>
         <button class="btn btn-primary" type="button" id="morning-done">آماده‌ام</button>
+      </div>
+      <div class="modal__footer" id="morning-footer-edit" hidden>
+        <button class="btn btn-ghost" type="button" id="morning-edit-cancel">انصراف</button>
+        <button class="btn btn-primary" type="button" id="morning-edit-save">ذخیره</button>
       </div>
     </div>
   </div>

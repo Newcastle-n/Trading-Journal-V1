@@ -68,10 +68,10 @@
   --primary-dim: #136f63;
   --primary-ghost: rgba(25, 143, 128, 0.12);
 
-  --gold: #b78a25;
-  --gold-bright: #d5aa47;
-  --gold-dim: #8e6a16;
-  --gold-ghost: rgba(183, 138, 37, 0.14);
+  --gold: #4578a0;
+  --gold-bright: #5a8fba;
+  --gold-dim: #2f5a7a;
+  --gold-ghost: rgba(69, 120, 160, 0.2);
 
   --text: #10201a;
   --text-muted: #4e655d;

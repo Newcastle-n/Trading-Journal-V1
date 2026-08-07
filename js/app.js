@@ -1,9 +1,10 @@
-import { config, DEFAULT_MEDIA_BASE_PATH } from "./config.js";
+import { config, DEFAULT_MEDIA_BASE_PATH, escapeHtml, todayISO, uid } from "./config.js";
 import { initRouter, onRoute, navigate } from "./router.js";
-import { loadAll, getState, saveSettings } from "./storage.js";
+import { loadAll, getState, saveSettings, saveJournal, upsertJournalEntry } from "./storage.js";
 import { bindSidebar, renderSidebar, renderSessionPill, syncNavActive } from "./components/sidebar.js";
 import { bindModalDismiss, openModal, closeModal } from "./components/modal.js";
 import { showToast } from "./components/toast.js";
+import { icon } from "./components/icons.js";
 import { renderDashboard } from "./dashboard.js";
 import { renderJournal, bindJournalForm } from "./journal.js";
 import { addQuickNote } from "./knowledge.js";
@@ -141,33 +142,99 @@ function bindCapture() {
 }
 
 function bindChecklists() {
-  document.getElementById("btn-morning")?.addEventListener("click", () => openModal("modal-morning"));
-  document.getElementById("btn-eod")?.addEventListener("click", () => {
-    openModal("modal-eod");
-  });
+  let morningEditMode = false;
+  let draftItems = null;
+
+  const setMorningEditMode = (on) => {
+    morningEditMode = on;
+    const viewFooter = document.getElementById("morning-footer-view");
+    const editFooter = document.getElementById("morning-footer-edit");
+    const title = document.getElementById("morning-title");
+    const biasWrap = document.getElementById("morning-bias-wrap");
+    if (viewFooter) viewFooter.hidden = on;
+    if (editFooter) editFooter.hidden = !on;
+    if (biasWrap) biasWrap.hidden = on;
+    if (title) title.textContent = on ? "ویرایش چک لیست" : "چک لیست";
+  };
+
+  const loadMorningBias = () => {
+    const ta = document.getElementById("morning-trading-bias");
+    if (!ta) return;
+    const today = todayISO();
+    const entry = (getState().journal?.entries || []).find((e) => e.date === today);
+    ta.value = entry?.tradingBias || "";
+  };
+
+  const saveMorningBias = async () => {
+    const ta = document.getElementById("morning-trading-bias");
+    if (!ta) return;
+    const tradingBias = ta.value.trim();
+    const today = todayISO();
+    const existing = (getState().journal?.entries || []).find((e) => e.date === today);
+    if (!tradingBias && !existing) return;
+    if (!tradingBias && existing && !String(existing.tradingBias || "").trim()) return;
+    await saveJournal(
+      upsertJournalEntry({
+        ...(existing || {}),
+        id: existing?.id || uid("j"),
+        date: today,
+        tradingBias,
+      }),
+    );
+  };
+
+  const collectDraftItems = () =>
+    [...document.querySelectorAll("#morning-list [data-morning-text]")]
+      .map((input) => input.value.trim())
+      .filter(Boolean);
 
   const renderChecks = () => {
     const s = getState().settings || {};
     const morning = document.getElementById("morning-list");
     const eod = document.getElementById("eod-list");
     if (morning) {
-      morning.innerHTML = (s.morningChecklist || [])
-        .map(
-          (t, i) => `
+      if (morningEditMode) {
+        const items = draftItems ?? [...(s.morningChecklist || [])];
+        draftItems = items;
+        morning.innerHTML = `
+          <div class="checklist-editor">
+            ${
+              items.length
+                ? items
+                    .map(
+                      (t, i) => `
+              <div class="checklist-editor__row" data-morning-index="${i}">
+                <button type="button" class="btn-icon checklist-editor__handle" data-morning-drag draggable="true" title="جابه‌جایی" aria-label="جابه‌جایی">${icon("grip", 14)}</button>
+                <input type="text" class="checklist-editor__input" data-morning-text value="${escapeHtml(t)}" placeholder="متن آیتم…" />
+                <button type="button" class="btn-icon" data-morning-del="${i}" title="حذف" aria-label="حذف">${icon("trash", 14)}</button>
+              </div>`,
+                    )
+                    .join("")
+                : `<p class="muted u-text-sm u-mb-3">هنوز آیتمی نیست. یکی اضافه کن.</p>`
+            }
+            <button type="button" class="btn btn-soft" id="morning-add-item">${icon("plus", 14)} افزودن مورد</button>
+          </div>`;
+      } else {
+        const items = s.morningChecklist || [];
+        morning.innerHTML = items.length
+          ? items
+              .map(
+                (t, i) => `
           <label class="list-row" style="cursor:pointer">
-            <span class="u-text-sm">${t}</span>
+            <span class="u-text-sm">${escapeHtml(t)}</span>
             <input type="checkbox" data-check="morning-${i}" />
-          </label>
-        `,
-        )
-        .join("");
+          </label>`,
+              )
+              .join("")
+          : `<p class="muted u-text-sm">چک‌لیستی تعریف نشده. با «ویرایش» آیتم اضافه کن.</p>`;
+      }
     }
     if (eod) {
       eod.innerHTML = (s.eodQuestions || [])
         .map(
           (t, i) => `
           <div class="field u-mb-3">
-            <label>${t}</label>
+            <label>${escapeHtml(t)}</label>
             <textarea rows="2" data-eod="${i}" placeholder="پاسخ کوتاه…"></textarea>
           </div>
         `,
@@ -176,9 +243,139 @@ function bindChecklists() {
     }
   };
 
-  document.getElementById("morning-done")?.addEventListener("click", () => {
-    closeModal("modal-morning");
-    showToast("چک لیست آماده است. موفق باشی.");
+  const openMorning = () => {
+    draftItems = null;
+    setMorningEditMode(false);
+    renderChecks();
+    loadMorningBias();
+    openModal("modal-morning");
+  };
+
+  document.getElementById("btn-morning")?.addEventListener("click", openMorning);
+  document.getElementById("btn-eod")?.addEventListener("click", () => {
+    openModal("modal-eod");
+  });
+
+  document.getElementById("morning-edit")?.addEventListener("click", () => {
+    draftItems = [...(getState().settings?.morningChecklist || [])];
+    setMorningEditMode(true);
+    renderChecks();
+    document.querySelector("#morning-list [data-morning-text]")?.focus();
+  });
+
+  document.getElementById("morning-edit-cancel")?.addEventListener("click", () => {
+    draftItems = null;
+    setMorningEditMode(false);
+    renderChecks();
+  });
+
+  document.getElementById("morning-edit-save")?.addEventListener("click", async () => {
+    const items = collectDraftItems();
+    try {
+      const state = getState();
+      await saveSettings({ ...state.settings, morningChecklist: items });
+      draftItems = null;
+      setMorningEditMode(false);
+      renderChecks();
+      showToast("چک لیست ذخیره شد");
+      await refresh();
+    } catch (err) {
+      showToast(err.message);
+    }
+  });
+
+  const readDraftFromDom = () =>
+    [...document.querySelectorAll("#morning-list [data-morning-text]")].map((el) => el.value);
+
+  const morningList = document.getElementById("morning-list");
+  let dragFromIndex = null;
+
+  morningList?.addEventListener("click", (e) => {
+    const addBtn = e.target.closest("#morning-add-item");
+    if (addBtn) {
+      draftItems = [...readDraftFromDom(), ""];
+      renderChecks();
+      const inputs = document.querySelectorAll("#morning-list [data-morning-text]");
+      inputs[inputs.length - 1]?.focus();
+      return;
+    }
+    const delBtn = e.target.closest("[data-morning-del]");
+    if (delBtn) {
+      const index = Number(delBtn.getAttribute("data-morning-del"));
+      const all = readDraftFromDom();
+      all.splice(index, 1);
+      draftItems = all;
+      renderChecks();
+    }
+  });
+
+  morningList?.addEventListener("dragstart", (e) => {
+    const handle = e.target.closest("[data-morning-drag]");
+    const row = e.target.closest(".checklist-editor__row");
+    if (!handle || !row || !morningEditMode) {
+      e.preventDefault();
+      return;
+    }
+    dragFromIndex = Number(row.dataset.morningIndex);
+    row.classList.add("is-dragging");
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", String(dragFromIndex));
+    try {
+      e.dataTransfer.setDragImage(row, 24, 16);
+    } catch {
+      /* some browsers reject custom drag images */
+    }
+  });
+
+  morningList?.addEventListener("dragend", () => {
+    dragFromIndex = null;
+    morningList.querySelectorAll(".checklist-editor__row.is-dragging, .checklist-editor__row.is-drag-over").forEach((el) => {
+      el.classList.remove("is-dragging", "is-drag-over");
+    });
+  });
+
+  morningList?.addEventListener("dragover", (e) => {
+    const row = e.target.closest(".checklist-editor__row");
+    if (row == null || dragFromIndex == null) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    morningList.querySelectorAll(".checklist-editor__row.is-drag-over").forEach((el) => {
+      if (el !== row) el.classList.remove("is-drag-over");
+    });
+    row.classList.add("is-drag-over");
+  });
+
+  morningList?.addEventListener("dragleave", (e) => {
+    const row = e.target.closest(".checklist-editor__row");
+    if (!row) return;
+    const related = e.relatedTarget;
+    if (related instanceof Node && row.contains(related)) return;
+    row.classList.remove("is-drag-over");
+  });
+
+  morningList?.addEventListener("drop", (e) => {
+    const row = e.target.closest(".checklist-editor__row");
+    if (row == null || dragFromIndex == null) return;
+    e.preventDefault();
+    const toIndex = Number(row.dataset.morningIndex);
+    if (Number.isNaN(toIndex) || toIndex === dragFromIndex) return;
+    const items = readDraftFromDom();
+    const [moved] = items.splice(dragFromIndex, 1);
+    items.splice(toIndex, 0, moved);
+    draftItems = items;
+    dragFromIndex = null;
+    renderChecks();
+  });
+
+  document.getElementById("morning-done")?.addEventListener("click", async () => {
+    try {
+      await saveMorningBias();
+      closeModal("modal-morning");
+      showToast("چک لیست آماده است. موفق باشی.");
+      await refresh();
+    } catch (err) {
+      showToast(err.message || "خطا در ذخیره دیدگاه");
+    }
   });
 
   document.getElementById("eod-to-journal")?.addEventListener("click", () => {
@@ -188,6 +385,7 @@ function bindChecklists() {
   });
 
   window.addEventListener("workspace:refresh-checklists", renderChecks);
+  window.addEventListener("workspace:open-morning-checklist", openMorning);
   renderChecks();
 }
 

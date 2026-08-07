@@ -388,6 +388,11 @@ export function enrichEntries(entries) {
   });
 }
 
+/** Day has a completed journal (balances), not just a pre-trade bias stub. */
+export function isJournalLogged(entry) {
+  return entry != null && Number.isFinite(Number(entry.balanceEnd));
+}
+
 export function tradesOfEntry(entry = {}) {
   if (Array.isArray(entry.trades) && entry.trades.length) {
     return entry.trades.map((trade) => {
@@ -511,7 +516,9 @@ export function calcTradeFilterStats(entries, filters = DEFAULT_TRADE_FILTERS) {
 }
 
 export function calcWindowStats(entries, predicate) {
-  const list = enrichEntries(entries).filter((e) => predicate(parseISODate(e.date)));
+  const list = enrichEntries(entries)
+    .filter(isJournalLogged)
+    .filter((e) => predicate(parseISODate(e.date)));
   const pnl = list.reduce((s, e) => s + e.pnl, 0);
   const startBal = list.length ? Number(list[0].balanceStart) : 0;
   const pct = startBal ? pnl / startBal : 0;
@@ -530,7 +537,7 @@ export function calcWindowStats(entries, predicate) {
 }
 
 export function calcStreak(entries) {
-  const days = new Set((entries || []).map((e) => e.date));
+  const days = new Set((entries || []).filter(isJournalLogged).map((e) => e.date));
   let streak = 0;
   const cursor = new Date();
   cursor.setHours(0, 0, 0, 0);

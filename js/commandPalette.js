@@ -104,7 +104,7 @@ function runAction(item, handlers) {
     navigate("backtests");
     window.dispatchEvent(new CustomEvent("workspace:new-backtest"));
   } else if (a.type === "morning") {
-    openModal("modal-morning");
+    window.dispatchEvent(new CustomEvent("workspace:open-morning-checklist"));
   } else if (a.type === "eod") {
     openModal("modal-eod");
   } else if (a.type === "settings") {

@@ -1,6 +1,161 @@
 {
   "entries": [
     {
+      "id": "bt-msc0o7dk-8p2wb",
+      "date": "2026-07-20",
+      "trades": [
+        {
+          "id": "trade-msc0g1na-0eb3z",
+          "strategy": "TR-FBO(-)",
+          "filters": [
+            {
+              "filter": "3s",
+              "outcome": "profit"
+            },
+            {
+              "filter": "Double FBO",
+              "outcome": "noPositionMinus"
+            },
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "noPositionMinus"
+            }
+          ],
+          "tradeFilter": "3s",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": "تک کندل بزرگ یکم شرایط فرق میکنه، میشه با فیلتر 3s وارد پوزیشن FBO شد\nهمچنین برای شکست نباید اقدام کرد وقتی بادی کندل خیلی بزرگه"
+        },
+        {
+          "id": "trade-msc0g6o0-w4j01",
+          "strategy": "TR-FBO+",
+          "filters": [
+            {
+              "filter": "Double FBO",
+              "outcome": "loss"
+            },
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "Double FBO",
+          "outcome": "loss",
+          "rr": 2,
+          "notes": ""
+        },
+        {
+          "id": "trade-msc0n4hy-bcusq",
+          "strategy": "TR-BO(-)",
+          "filters": [
+            {
+              "filter": "Double BO",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "Double BO",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": ""
+        }
+      ],
+      "strategy": "TR-FBO(-)",
+      "tradeFilter": "3s",
+      "rr": 2,
+      "notes": "تک کندل بزرگ یکم شرایط فرق میکنه، میشه با فیلتر 3s وارد پوزیشن FBO شد\nهمچنین برای شکست نباید اقدام کرد وقتی بادی کندل خیلی بزرگه",
+      "mediaPath": "E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-7-20"
+    },
+    {
+      "id": "bt-msbzdc16-7rjnz",
+      "date": "2026-07-17",
+      "trades": [
+        {
+          "id": "trade-msbzbnmf-l2a4y",
+          "strategy": "BE-RS",
+          "filters": [
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "loss"
+            },
+            {
+              "filter": "Double FBO",
+              "outcome": "noPositionPlus"
+            }
+          ],
+          "tradeFilter": "50% Pullback FBO",
+          "outcome": "loss",
+          "rr": 2,
+          "notes": ""
+        },
+        {
+          "id": "trade-msbzkpfd-v6wf5",
+          "strategy": "BE-RS-BO",
+          "filters": [
+            {
+              "filter": "Double BO",
+              "outcome": "profit"
+            },
+            {
+              "filter": "50% Pullback BO",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "Double BO",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": ""
+        },
+        {
+          "id": "trade-msbzn3cu-qzok7",
+          "strategy": "TR-FBO+",
+          "filters": [
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "50% Pullback FBO",
+          "outcome": "loss",
+          "rr": 2,
+          "notes": ""
+        }
+      ],
+      "strategy": "BE-RS",
+      "tradeFilter": "50% Pullback FBO",
+      "rr": 2,
+      "notes": "همون اول کار باید یه ضرر میکردم، یه سود\nدر ادامه روز پرچالشی میتونسته باشه، وقتی تو موقعیت BE-RS یا BE-Pullback قرار میگیرم درسته احتمال خیلی خیلی بیشتره که در جهت روند حرکت کنه ولی نباید ذهنم قفل کنه و وقتی داره Failed میشه چشمم نبینه",
+      "mediaPath": "E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-7-17"
+    },
+    {
+      "id": "bt-msbz0xta-0191n",
+      "date": "2026-07-16",
+      "trades": [
+        {
+          "id": "trade-msbx5wss-dw3z8",
+          "strategy": "TR-FBO+",
+          "filters": [
+            {
+              "filter": "Double FBO",
+              "outcome": "noPositionMinus"
+            },
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "Double FBO",
+          "outcome": "profit",
+          "rr": 2,
+          "notes": ""
+        }
+      ],
+      "strategy": "TR-FBO+",
+      "tradeFilter": "Double FBO",
+      "rr": 2,
+      "notes": "",
+      "mediaPath": "E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-7-16"
+    },
+    {
       "id": "bt-ms8vn3o9-r7odg",
       "date": "2026-07-15",
       "trades": [

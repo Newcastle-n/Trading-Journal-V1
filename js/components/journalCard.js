@@ -119,6 +119,7 @@ export function journalCardHtml(entry, { strategyMap = {}, highlightStrategy = "
           `;
         }).join("")}
       </div>
+      ${entry.tradingBias ? `<p class="journal-card__notes"><strong class="muted">دیدگاه معاملاتی:</strong> ${escapeHtml(entry.tradingBias)}</p>` : ""}
       ${entry.lesson ? `<p class="journal-card__notes"><strong class="muted">درس امروز:</strong> ${escapeHtml(entry.lesson)}</p>` : ""}
       ${entry.notes ? `<p class="journal-card__notes"><strong class="muted">یادداشت:</strong> ${escapeHtml(entry.notes)}</p>` : ""}
     </article>

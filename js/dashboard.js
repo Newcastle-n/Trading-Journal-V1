@@ -7,13 +7,13 @@ import {
   enrichEntries,
   escapeHtml,
   formatPct,
+  isJournalLogged,
   resolveTradeFilters,
   sameMonth,
   sameWeek,
   todayISO,
 } from "./config.js";
 import { navigate } from "./router.js";
-import { openModal } from "./components/modal.js";
 
 function progressPct(actual, goal) {
   if (!goal) return 0;
@@ -66,7 +66,7 @@ export function renderDashboard(state) {
   const goals = settings.goals || plan.goals || {};
   const entries = state.journal?.entries || [];
   const enriched = enrichEntries(entries).sort((a, b) => b.date.localeCompare(a.date));
-  const hasToday = entries.some((e) => e.date === todayISO());
+  const hasToday = entries.some((e) => e.date === todayISO() && isJournalLogged(e));
   const streak = calcStreak(entries);
   const now = new Date();
   const dayStats = calcWindowStats(entries, (d) => d.toDateString() === now.toDateString());
@@ -214,7 +214,7 @@ export function renderDashboard(state) {
       } else if (action === "goto-journal") {
         navigate("journal");
       } else if (action === "morning") {
-        openModal("modal-morning");
+        window.dispatchEvent(new CustomEvent("workspace:open-morning-checklist"));
       } else if (action === "open-plan") {
         navigate("knowledge2");
         window.dispatchEvent(new CustomEvent("workspace:open-booklet-chapter", { detail: "trading-plan" }));

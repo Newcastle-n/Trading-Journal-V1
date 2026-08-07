@@ -7,6 +7,7 @@ import {
   calcStreak,
   calcWindowStats,
   enrichEntries,
+  isJournalLogged,
   sameWeek,
 } from "../config.js";
 import { navigate } from "../router.js";
@@ -29,12 +30,12 @@ export function decorateNavIcons() {
 
 export function renderSidebar(state) {
   const entries = state.journal?.entries || [];
-  const enriched = enrichEntries(entries).sort((a, b) => a.date.localeCompare(b.date));
+  const enriched = enrichEntries(entries).filter(isJournalLogged).sort((a, b) => a.date.localeCompare(b.date));
   const last = enriched[enriched.length - 1];
   const balance = last ? Number(last.balanceEnd) : 0;
   const now = new Date();
   const week = calcWindowStats(entries, (d) => sameWeek(d, now));
-  const hasToday = entries.some((e) => e.date === todayISO());
+  const hasToday = entries.some((e) => e.date === todayISO() && isJournalLogged(e));
   const streak = calcStreak(entries);
 
   const dateEl = document.getElementById("sidebar-date");

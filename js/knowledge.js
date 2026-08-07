@@ -1,4 +1,4 @@
-import { escapeHtml, uid } from "./config.js";
+import { escapeHtml, todayISO, uid } from "./config.js";
 import { icon } from "./components/icons.js";
 import { saveNotes, getState } from "./storage.js";
 import { showToast } from "./components/toast.js";
@@ -729,6 +729,7 @@ export async function addQuickNote(text) {
     text,
     tags: [],
     favorite: false,
+    date: todayISO(),
     createdAt: new Date().toISOString(),
   });
   await saveNotes(notes);

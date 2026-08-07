@@ -1,6 +1,164 @@
 {
   "entries": [
     {
+      "id": "j-msj11q5d-0l1kk",
+      "date": "2026-08-07",
+      "balanceStart": 456,
+      "balanceEnd": 435,
+      "trades": [
+        {
+          "id": "trade-msj0g853-wpisn",
+          "strategy": "RV-FBO",
+          "filters": [
+            {
+              "filter": "50% Pullback FBO",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "50% Pullback FBO",
+          "entryQuality": 4,
+          "exitQuality": 1,
+          "rr": 2,
+          "emotion": "",
+          "notes": "و 50%TR-FBO",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-msj0nvhd-t7vb6",
+          "strategy": "RV-FBO",
+          "filters": [
+            {
+              "filter": "Double FBO",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "Double FBO",
+          "entryQuality": 3,
+          "exitQuality": 4,
+          "rr": 2,
+          "emotion": "",
+          "notes": "و 50%TR-FBO__ البته نمیشه گفت فیلتر DoubleFBO عمل کرده",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-msj0nvpk-socu2",
+          "strategy": "RV-BO",
+          "filters": [
+            {
+              "filter": "Double BO",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "Double BO",
+          "entryQuality": 4,
+          "exitQuality": 5,
+          "rr": 2,
+          "emotion": "انتقام و سود بیشتر چون 2 معامله اول رو ضرر کردم",
+          "notes": "درحد چند میکرون فاصله داشته تا TP2",
+          "outcome": "loss"
+        },
+        {
+          "id": "trade-msj0nwso-v25b9",
+          "strategy": "تحلیلی",
+          "filters": [
+            {
+              "filter": "None",
+              "outcome": "loss"
+            }
+          ],
+          "tradeFilter": "None",
+          "entryQuality": 3,
+          "exitQuality": 4,
+          "rr": 2,
+          "emotion": "انتقام معاملات قبلی",
+          "notes": "",
+          "outcome": "loss"
+        }
+      ],
+      "strategy": "RV-FBO",
+      "tradeFilter": "50% Pullback FBO",
+      "entryQuality": 4,
+      "exitQuality": 1,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 2,
+      "tradingBias": "",
+      "lesson": "جمعه ها ریسک باید باید نصف بشه از این به بعد و حداکثر هم همون 3 معامله مجازم انجام بدم",
+      "notes": "ساعت 16:55 رسیدم خونه و اومدم پشت سیستم و ترید زدم!\nحداقل 20 دقیقه قبل مارکت باید روتین داشته باشم برای ذهنم که آروم بشه\nوقتی از بیرون میام خونه، جرعت بیشتری دارم برای ترید زدن توی مارکت که این اصلا خوب نیست\nباید یه بالانسی بین داشتن جرعت و ترسو بودن موقع ترید پیدا کنم که طبق پلن هرچی بود پیش برم\nضرر یا سودش برام مهم نباشه اصلا",
+      "mediaPath": "E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-8-7"
+    },
+    {
+      "id": "j-mshjyj3k-iowi1",
+      "date": "2026-08-06",
+      "tradingBias": "دیدگاه buy هست بیشتر\nروی شکست کف، نیم درصد ریسک میکنم",
+      "balanceStart": 455,
+      "balanceEnd": 456,
+      "trades": [
+        {
+          "id": "trade-mshktkpe-joccf",
+          "strategy": "TR-BO(-)",
+          "filters": [
+            {
+              "filter": "Double BO",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "Double BO",
+          "entryQuality": 5,
+          "exitQuality": 1,
+          "rr": 2,
+          "emotion": "ترس از ضرر",
+          "notes": "RF الکی ممنوع- نهایتا ضرر میخوری دگ",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "TR-BO(-)",
+      "tradeFilter": "Double BO",
+      "entryQuality": 5,
+      "exitQuality": 1,
+      "rr": 2,
+      "emotion": "ترس از ضرر",
+      "ruleFollow": 1,
+      "lesson": "ریسک فری دیگه حق نداری بکنی ( فیلتر ریسک فری ، 2بار باید قیمت به حدود TP 1.5 برسه، بعد اجازه ریسک فری داری )\nبخاطر ریسک فری و ترس از ورود تو این 2 هفته حداقل 10تا TP از دست دادم!!!",
+      "notes": "من دیگه سطحم به حدی رسیده که ترسی نداشته باشم و با اعتماد به نفس بالا ترید بزنم\nدارم لایف استایلم رو هم درست میکنم که دیگه همه چی باهم مچ بشه دوباره، مثل قدیم\nبا این تفاوت که دیگه اندفعه همه چی سیفه و مثل قبل دیگه امکان نداره دچار خطا بشم\nنهایتا 3 درصد ضرر میکنم در یک روز و در یک هفته هم نهایتا 6 درصد ضرر میکنم، تمام!",
+      "mediaPath": "E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-8-6"
+    },
+    {
+      "id": "j-msdas26m-8606b",
+      "date": "2026-08-03",
+      "balanceStart": 449.5,
+      "balanceEnd": 455,
+      "trades": [
+        {
+          "id": "trade-msdar9a7-yz5wb",
+          "strategy": "RV-FBO",
+          "filters": [
+            {
+              "filter": "3s",
+              "outcome": "profit"
+            }
+          ],
+          "tradeFilter": "3s",
+          "entryQuality": 3,
+          "exitQuality": 4,
+          "rr": 2,
+          "emotion": "",
+          "notes": "",
+          "outcome": "profit"
+        }
+      ],
+      "strategy": "RV-FBO",
+      "tradeFilter": "3s",
+      "entryQuality": 3,
+      "exitQuality": 4,
+      "rr": 2,
+      "emotion": "",
+      "ruleFollow": 3,
+      "lesson": "",
+      "notes": "",
+      "mediaPath": "E:\\Desktop\\LevelsReaction\\SobhanSamadi System\\SSNT Live Trades\\2026-8-3"
+    },
+    {
       "id": "j-ms9ckjtl-z1rkw",
       "date": "2026-07-31",
       "balanceStart": 444,

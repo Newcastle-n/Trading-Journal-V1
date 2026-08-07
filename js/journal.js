@@ -12,6 +12,7 @@ import {
   formatMoney,
   formatPct,
   groupStrategies,
+  isJournalLogged,
   normalizeFilterOutcome,
   normalizeOutcome,
   normalizeTradeFilter,
@@ -351,7 +352,7 @@ function weekStartKey(iso) {
 
 function weeklySummaries(entries) {
   const groups = {};
-  enrichEntries(entries).forEach((entry) => {
+  enrichEntries(entries).filter(isJournalLogged).forEach((entry) => {
     const date = new Date(`${entry.date}T12:00:00`);
     if (date.getDay() === 0 || date.getDay() === 6) return;
     const key = weekStartKey(entry.date);
@@ -487,7 +488,9 @@ function calendarCell(entry, iso, day, weekSummary, {
 
 function buildCalendar(entries, year, month) {
   const meta = calendarMeta();
-  const byDate = Object.fromEntries(enrichEntries(entries).map((entry) => [entry.date, entry]));
+  const byDate = Object.fromEntries(
+    enrichEntries(entries).filter(isJournalLogged).map((entry) => [entry.date, entry]),
+  );
   const byWeek = weeklySummaries(entries);
   const first = new Date(year, month, 1);
   const startPad = (first.getDay() + 6) % 7;
@@ -610,6 +613,24 @@ function openDayCard(date, entries, map) {
     document.getElementById("day-card-new")?.addEventListener("click", () => {
       closeModal("modal-day-card");
       openJournalForm({ date });
+    });
+    return;
+  }
+
+  if (!isJournalLogged(entry)) {
+    const bias = String(entry.tradingBias || "").trim();
+    body.innerHTML = `
+      ${mediaBar}
+      ${bias ? `<p class="journal-card__notes"><strong class="muted">دیدگاه معاملاتی:</strong> ${escapeHtml(bias)}</p>` : ""}
+      <div class="empty-state" style="padding:var(--space-5)">
+        ژورنال کامل این روز هنوز ثبت نشده.
+        <div class="u-mt-4"><button class="btn btn-primary" type="button" id="day-card-new">ثبت ژورنال این روز</button></div>
+      </div>`;
+    openModal("modal-day-card");
+    bindDayMediaActions(body, date, entries, map);
+    document.getElementById("day-card-new")?.addEventListener("click", () => {
+      closeModal("modal-day-card");
+      openJournalForm(entry);
     });
     return;
   }
@@ -908,7 +929,9 @@ export function renderJournal(state) {
   const root = document.getElementById("view-journal");
   if (!root) return;
   const entries = state.journal?.entries || [];
-  const enriched = enrichEntries(entries).sort((a, b) => b.date.localeCompare(a.date));
+  const enriched = enrichEntries(entries)
+    .filter(isJournalLogged)
+    .sort((a, b) => b.date.localeCompare(a.date));
   const now = new Date();
   const week = calcWindowStats(entries, (date) => sameWeek(date, now));
   const month = calcWindowStats(entries, (date) => sameMonth(date, now));
@@ -1110,12 +1133,14 @@ export function openJournalForm(entry = null) {
   const form = document.getElementById("journal-form");
   if (!form) return;
   const existing = entry?.id ? entry : null;
+  const logged = existing && isJournalLogged(existing);
   const date = entry?.date || todayISO();
-  document.getElementById("journal-modal-title").textContent = existing ? "ویرایش ژورنال" : "ثبت ژورنال جدید";
+  document.getElementById("journal-modal-title").textContent = logged ? "ویرایش ژورنال" : "ثبت ژورنال جدید";
   form.elements.id.value = existing?.id || "";
   form.elements.date.value = date;
   form.elements.balanceEnd.value = existing?.balanceEnd ?? "";
   form.elements.ruleFollow.value = existing?.ruleFollow ?? 3;
+  form.elements.tradingBias.value = existing?.tradingBias || "";
   form.elements.lesson.value = existing?.lesson || "";
   form.elements.notes.value = existing?.notes || "";
   const savedPath = resolveEntryMediaPath(existing);
@@ -1124,7 +1149,7 @@ export function openJournalForm(entry = null) {
   form.dataset.autoMediaPath = !savedPath || savedPath === autoPath ? (savedPath || autoPath) : "";
   renderTradeEditors(normalizeTrades(existing || {}));
 
-  if (existing) {
+  if (logged) {
     form.elements.balanceStart.value = existing.balanceStart ?? "";
     form.elements.balanceStart.readOnly = true;
     document.getElementById("balance-source-hint").textContent = "بالانس ثبت‌شده این روز؛ در صورت نیاز قابل ویرایش است.";
@@ -1356,6 +1381,7 @@ export function bindJournalForm(onSaved) {
       rr: firstTrade.rr,
       emotion: firstTrade.emotion,
       ruleFollow: Number(fd.get("ruleFollow")),
+      tradingBias: String(fd.get("tradingBias") || ""),
       lesson: String(fd.get("lesson") || ""),
       notes: String(fd.get("notes") || ""),
       mediaPath: String(fd.get("mediaPath") || "").trim() || defaultMediaPathForDate(date, mediaBasePath()),
@@ -1470,6 +1496,10 @@ export function bindJournalForm(onSaved) {
   window.addEventListener("workspace:new-journal", () => {
     const today = (getState().journal?.entries || []).find((entry) => entry.date === todayISO());
     openJournalForm(today || null);
+  });
+  window.addEventListener("workspace:manage-strategies", (event) => {
+    const id = event.detail?.id;
+    openStrategyManager(id == null ? null : id);
   });
   window.addEventListener("workspace:filter-strategy", (event) => {
     const { name, view } = event.detail || {};
